@@ -1,0 +1,7 @@
+.sidebar-container {
+  width: 250px;
+  flex-shrink: 0;
+  background-color: #f0f2f5;
+  padding: 1rem;
+  border-right: 1px solid #ddd;
+}
