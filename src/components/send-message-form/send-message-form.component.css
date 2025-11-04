@@ -1,0 +1,32 @@
+.send-message-form {
+  display: flex;
+  padding: 1rem;
+  border-top: 1px solid #ddd;
+  flex-shrink: 0;
+  width: 70%;
+  align-self: center;
+  max-width: 850px;
+}
+
+.send-message-form input {
+  flex-grow: 1;
+  padding: 0.75rem;
+  border: 1px solid #000000;
+  border-radius: 8px;
+  margin-right: 0.5rem;
+}
+
+.send-message-form button {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  background-color: #007bff;
+  cursor: pointer;
+  border-radius: 8px;
+  color: #ffffff;
+}
+
+@media (max-width: 768px) {
+  .send-message-form {
+    width: 100%;
+  }
+}

@@ -1,0 +1,41 @@
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden; /* Garante que as barras de rolagem não apareçam globalmente */
+}
+
+/* SEU CSS GLOBAL AJUSTADO */
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  font-weight: 500;
+  text-decoration: inherit;
+}
+/* A cor é controlada pelo Tailwind/App */
+
+body {
+  margin: 0;
+  min-width: 320px;
+  /* display: flex e place-items: center removidos do body para evitar conflitos de layout */
+}
+
+/* Restante dos seus estilos */
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
