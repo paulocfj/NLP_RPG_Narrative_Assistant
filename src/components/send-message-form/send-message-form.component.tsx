@@ -1,38 +1,51 @@
 import { useState } from 'react';
-import './send-message-form.component.css';
-// TIPO: Definimos as props que o componente espera receber
+
 type SendMessageFormProps = {
-  onSendMessage: (messageText: string) => void; // Espera uma função que recebe string e não retorna nada
+  onSendMessage: (messageText: string) => void;
+  isDisabled: boolean;
 };
+const SendMessageForm = ({
+  onSendMessage,
+  isDisabled,
+}: SendMessageFormProps) => {
+  const [inputText, setInputText] = useState('');
 
-// TIPO: Aplicamos a interface de Props ao componente
-const SendMessageForm = ({ onSendMessage }: SendMessageFormProps) => {
-  // TIPO: useState infere que 'inputText' é string, mas podemos ser explícitos
-  const [inputText, setInputText] = useState<string>('');
-
-  // TIPO: Evento de submissão de formulário
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (inputText.trim()) {
+    if (inputText.trim() && !isDisabled) {
       onSendMessage(inputText);
       setInputText('');
     }
   };
 
-  // TIPO: Evento de mudança no input
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputText(e.target.value);
   };
 
   return (
-    <form className="send-message-form" onSubmit={handleSubmit}>
+    <form
+      className="p-4 bg-gray-900 border-t border-gray-700 flex shadow-inner"
+      onSubmit={handleSubmit}
+    >
       <input
         type="text"
-        placeholder="Digite sua mensagem..."
+        placeholder={
+          isDisabled
+            ? 'A missão está completa! Revise o Guia...'
+            : 'Responda ao Guia ou escolha uma sugestão...'
+        }
         value={inputText}
         onChange={handleChange}
+        disabled={isDisabled}
+        className="flex-1 p-3 border-2 border-gray-600 bg-gray-700 text-gray-100 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 disabled:bg-gray-800 disabled:text-gray-500 placeholder:text-gray-500"
       />
-      <button type="submit">Enviar</button>
+      <button
+        type="submit"
+        disabled={isDisabled || !inputText.trim()}
+        className="px-6 py-3 bg-yellow-600 text-gray-900 font-extrabold rounded-r-lg hover:bg-yellow-500 transition duration-150 disabled:bg-gray-500 disabled:text-gray-700"
+      >
+        Enviar
+      </button>
     </form>
   );
 };
