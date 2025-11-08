@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { MessageList } from '../message-list/message-list.component';
 import { SendMessageForm } from '../send-message-form/send-message-form.component';
 import { InitialGuide, MedievalTheme } from '../../data';
-import type { CompleteGuide, Message } from '../../types';
+import type { CompleteGuide, Message, NpcChallenge } from '../../types';
 import { ScenarioDraftSummaryComponent } from '../scenario-draft-summary/scenario-draft-summary.component';
 
 let messageIdCounter = 0;
@@ -11,102 +11,112 @@ const SENDER_BOT = 'bot';
 const SENDER_USER = 'user';
 
 const ChatWindow = () => {
+  // Nota: O estado 'messages' armazena o tipo Message + as propriedades extendidas (suggestions, isStatus)
   const [messages, setMessages] = useState<Message[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [scenarioDraft, setScenarioDraft] = useState<CompleteGuide>([]);
   const [isFinished, setIsFinished] = useState(false);
+  const [inputPreFill, setInputPreFill] = useState('');
 
   const currentQuestion = InitialGuide[currentQuestionIndex];
   const totalQuestions = InitialGuide.length;
   const progressText = `Passo ${currentQuestionIndex + 1} de ${totalQuestions}`;
 
-  // Função que formata a pergunta do bot com as 3 sugestões do cenário
-  const formatBotQuestion = useCallback((questionIndex: number): string => {
-    const questionData = InitialGuide[questionIndex];
-    if (!questionData) return '';
+  /**
+   * Normaliza um item de sugestão para uma string.
+   * Se for NpcChallenge, extrai o texto do desafio e remove o que estiver entre colchetes.
+   * @param item O item da sugestão, que pode ser string ou NpcChallenge.
+   * @returns A sugestão como string.
+   */
+  function normalizeSuggestion(item: string | NpcChallenge): string {
+    if (typeof item === 'string') {
+      return item;
+    }
 
-    const questionText = questionData.question;
+    if (item && typeof item === 'object' && 'challenge' in item) {
+      // Caso NpcChallenge: Extrai o texto do desafio e remove o conteúdo entre colchetes
+      return item.challenge.replace(/\[[^\]]+\]/g, '').trim();
+    }
+
+    // Retorna uma string vazia como fallback seguro
+    return '';
+  }
+
+  // Função que retorna o texto e a lista de sugestões separadamente.
+  const formatBotQuestion = useCallback((questionIndex: number) => {
+    const questionData = InitialGuide[questionIndex];
+    if (!questionData) return { text: '', suggestions: undefined };
+
+    const questionText = `<strong>${questionData.question}</strong>`;
     const scenarioSection = MedievalTheme[4].themeSuggestions.find(
       (s) => s.id === questionData.id,
     );
 
-    // Se não houver sugestões, mostra apenas a pergunta
-    if (!scenarioSection || scenarioSection.suggestion.length === 0) {
-      return `<strong>${questionText}</strong><br><br>Sem sugestões disponíveis.`;
-    }
+    const rawSuggestions = scenarioSection?.suggestion || [];
 
-    const suggestions = scenarioSection.suggestion.slice(0, 3);
-    let suggestionsHtml = '<ul class="list-none ml-0 mt-3 space-y-2 text-sm">';
-
-    suggestions.forEach((item, index) => {
-      let text = '';
-      const itemAsObj = item;
-
-      if (typeof itemAsObj === 'string') {
-        text = itemAsObj;
-      } else if (
-        itemAsObj &&
-        typeof itemAsObj === 'object' &&
-        'challenge' in itemAsObj
-      ) {
-        // Caso especial para sugestões estruturadas (Pergunta 7)
-        text = itemAsObj.challenge.replace(/\[[^\]]+\]/g, '').trim();
-      }
-
-      // Estilo temático para as sugestões
-      suggestionsHtml += `<li class="p-2 border border-gray-600 rounded-md bg-gray-800 hover:bg-gray-700 transition duration-150 cursor-pointer">
-                            <span class="font-bold text-yellow-500">${index + 1}.</span> ${text}
-                            </li>`;
-    });
-    suggestionsHtml += '</ul>';
-
-    return `<strong>${questionText}</strong><br><br>Escolha uma das sugestões abaixo (ou digite a sua própria resposta).<br>${suggestionsHtml}`;
+    // 1. Mapeia o array de sugestões (que pode ser string[] | NpcChallenge[])
+    // 2. Chama normalizeSuggestion para cada item, garantindo que o resultado seja string.
+    const suggestions: string[] = rawSuggestions
+      .map(normalizeSuggestion)
+      .slice(0, 3)
+      .filter((text) => text.length > 0); // Opcional: Remove sugestões vazias após a normalização
+    return {
+      text: questionText,
+      suggestions: suggestions ?? [],
+    };
   }, []);
 
   // Efeito para iniciar o chat com a primeira pergunta
   useEffect(() => {
-    // Evita rodar duas vezes no React.StrictMode
     if (messages.length > 0) return;
 
     const initialMessage: Message = {
       id: getNextMessageId(),
-      text: `<strong>Saudações, Mestre!</strong> Seja bem-vindo ao seu Guia de Cenário RPG. Vamos criar uma aventura épica OneShot em 9 passos!`,
+      text: `<strong>Saudações, Mestre!</strong> Seja bem-vindo ao seu Guia de Cenário RPG. Vamos criar uma aventura épica OneShot em ${totalQuestions} passos!`,
       sender: SENDER_BOT,
-      timestamp: Date.now().toLocaleString('pr-BR'),
+      timestamp: new Date().toLocaleString('pt-BR'),
+      isStatus: true,
     };
 
+    const firstQuestionData = formatBotQuestion(0);
     const firstQuestion: Message = {
       id: getNextMessageId(),
-      text: formatBotQuestion(0),
+      text: firstQuestionData.text,
+      suggestions: firstQuestionData.suggestions, // Propriedade extendida
       sender: SENDER_BOT,
-      timestamp: Date.now().toLocaleString('pr-BR'),
+      timestamp: new Date().toLocaleString('pt-BR'),
+      isStatus: false,
     };
 
     setMessages([initialMessage, firstQuestion]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Dependência vazia, roda apenas na montagem
+  }, [formatBotQuestion, messages.length, totalQuestions]);
 
   // Efeito para rolar o chat para baixo
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    const anchor = document.getElementById('scroll-anchor');
-    if (anchor) {
-      // Pequeno timeout para garantir que o DOM foi atualizado
-      setTimeout(() => {
-        anchor.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
-    }
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // Função para preencher o input com o texto da sugestão clicada
+  const handleSuggestionClick = useCallback((text: string) => {
+    setInputPreFill(text);
+  }, []);
 
   // Função principal para lidar com o envio de mensagens do usuário
   const handleSendMessage = useCallback(
     (text: string) => {
       if (isFinished || !currentQuestion) return;
 
+      // Limpa o preenchimento automático após o envio
+      setInputPreFill('');
+
+      // Cria a mensagem base do usuário
       const userMessage: Message = {
         id: getNextMessageId(),
         text: text,
         sender: SENDER_USER,
-        timestamp: Date.now().toLocaleString('pt-BR'),
+        timestamp: new Date().toLocaleString('pt-BR'),
+        isStatus: false,
       };
 
       setMessages((prev) => [...prev, userMessage]);
@@ -129,9 +139,10 @@ const ChatWindow = () => {
 
         const finalMessage: Message = {
           id: getNextMessageId(),
-          text: `<strong>MISSÃO CUMPRIDA!</strong> Todas as 9 etapas foram concluídas com sucesso. Role a tela para baixo para revisar o seu Guia de Aventura final!`,
+          text: `<strong>MISSÃO CUMPRIDA!</strong> Todas as ${totalQuestions} etapas foram concluídas com sucesso. Role a tela para baixo para revisar o seu Guia de Aventura final!`,
           sender: SENDER_BOT,
-          timestamp: Date.now().toLocaleString('pt-BR'),
+          timestamp: new Date().toLocaleString('pt-BR'),
+          isStatus: true,
         };
 
         setMessages((prev) => [...prev, finalMessage]);
@@ -139,18 +150,27 @@ const ChatWindow = () => {
       }
 
       // 3. Prepara e envia a próxima pergunta
+      const nextQuestionData = formatBotQuestion(nextQuestionIndex);
       const botQuestionMessage: Message = {
         id: getNextMessageId(),
-        text: formatBotQuestion(nextQuestionIndex),
+        text: nextQuestionData.text,
+        suggestions: nextQuestionData.suggestions, // Propriedade extendida
         sender: SENDER_BOT,
-        timestamp: Date.now().toLocaleString('pt-BR'),
+        timestamp: new Date().toLocaleString('pt-BR'),
+        isStatus: false,
       };
 
       // 4. Atualiza o estado
       setCurrentQuestionIndex(nextQuestionIndex);
       setMessages((prev) => [...prev, botQuestionMessage]);
     },
-    [currentQuestionIndex, formatBotQuestion, isFinished, currentQuestion],
+    [
+      currentQuestionIndex,
+      isFinished,
+      currentQuestion,
+      formatBotQuestion,
+      totalQuestions,
+    ],
   );
 
   return (
@@ -169,7 +189,11 @@ const ChatWindow = () => {
 
       {/* Área de Mensagens e Rascunho */}
       <div className="flex-1 flex flex-col overflow-y-auto">
-        <MessageList messages={messages} />
+        <MessageList
+          messages={messages}
+          onSuggestionClick={handleSuggestionClick}
+          ref={messagesEndRef}
+        />
         <ScenarioDraftSummaryComponent
           isFinished={isFinished}
           scenarioDraft={scenarioDraft}
@@ -181,6 +205,8 @@ const ChatWindow = () => {
         <SendMessageForm
           onSendMessage={handleSendMessage}
           isDisabled={isFinished}
+          preFillText={inputPreFill}
+          onInputFilled={() => setInputPreFill('')}
         />
       </div>
     </div>
