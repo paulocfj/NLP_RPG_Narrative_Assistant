@@ -1,15 +1,23 @@
-import { Sidebar } from "../../components/sidebar/sidebar.component";
-import { ChatWindow } from "../../components/chat-window/chat-window.component";
-import "./chatbot.page.css"; // Estilo para a página
+import './chatbot.page.css';
+import { ChatWindow, Sidebar } from '../../components';
 
 const ChatbotPage = () => {
   return (
-    <div className="chatbot-layout">
-      {/* 1. Menu Lado Esquerdo */}
-      <Sidebar />
+    <div
+      className="flex h-screen bg-gray-950 text-gray-100 p-0 md:p-4"
+      style={{ fontFamily: 'Inter, sans-serif' }}
+    >
+      <div className="w-full md:w-[95%] lg:w-[1200px] h-full mx-auto flex bg-gray-900 rounded-none md:rounded-xl shadow-2xl overflow-hidden">
+        {/* Sidebar - O Grimório */}
+        <div className="w-full md:w-1/4 max-w-[300px] hidden md:block">
+          <Sidebar />
+        </div>
 
-      {/* 2. Área do Chat (restante do espaço) */}
-      <ChatWindow />
+        {/* Main Chat Area - A Janela de Diálogo */}
+        <div className="flex-1 flex flex-col">
+          <ChatWindow />
+        </div>
+      </div>
     </div>
   );
 };
