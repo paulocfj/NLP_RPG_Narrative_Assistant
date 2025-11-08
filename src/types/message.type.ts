@@ -20,6 +20,10 @@ type Message = {
   /** A string representation of the time the message was sent (e.g., ISO 8601 format). */
 
   timestamp: string;
+
+  isStatus: boolean;
+
+  suggestions?: string[];
 };
 
 export type { Message };
