@@ -1,6 +1,40 @@
-.chatbot-layout {
-  display: flex;
-  height: 100vh;
-  width: 100vw;
-  overflow: hidden;
+/* CSS para o Indicador de Digitação */
+.dot-flashing {
+  position: relative;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: #6366f1; /* Tailwind Indigo 500 */
+  color: #6366f1;
+  animation: dotFlashing 1s infinite linear alternate;
+  animation-delay: 0s;
+}
+.dot-flashing::before,
+.dot-flashing::after {
+  content: '';
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: #6366f1;
+  animation: dotFlashing 1s infinite linear alternate;
+}
+.dot-flashing::before {
+  left: -10px;
+  animation-delay: 0.5s;
+}
+.dot-flashing::after {
+  left: 10px;
+  animation-delay: 1s;
+}
+@keyframes dotFlashing {
+  0% {
+    background-color: #a5b4fc;
+  } /* Tailwind Indigo 300 */
+  50%,
+  100% {
+    background-color: #312e81;
+  } /* Tailwind Indigo 900 */
 }
