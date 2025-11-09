@@ -5,7 +5,6 @@ type MessageProps = {
   message: Message;
   onSuggestionClick: (text: string) => void;
 };
-//type MessageProps = Pick<Message, 'text' | 'sender'>;
 //const SENDER_BOT = 'bot';
 const SENDER_USER = 'user';
 
