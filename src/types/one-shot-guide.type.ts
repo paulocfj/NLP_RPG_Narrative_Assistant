@@ -6,9 +6,6 @@ export type GuidePillar =
   | 'STRUCTURE'
   | 'STREAMLINE';
 
-/** Defines the expected data input type for the GM/User */
-export type InputType = 'text_area' | 'text_input' | 'object_list';
-
 /**
  * Interface for the Neutral Question Structure (Scaffolding).
  * Used in 'CoreQuestionsGuide'.
@@ -18,7 +15,6 @@ export type OneShotGuideQuestion = {
   pillar: GuidePillar;
   mainFocus: string; // Ex: 'Immediate Action', 'Objective Clarity'
   question: string;
-  type: InputType;
 };
 
 /** The neutral OneShotGuide is an array of these questions */
@@ -55,3 +51,10 @@ export type ThematicScenario = {
 
 /** The main thematic suggestions object is an array of Scenarios. */
 export type ThematicScenarioCollection = ThematicScenario[];
+
+export type GuideQuestion = {
+  question: string;
+  userResponse: string;
+};
+
+export type CompleteGuide = GuideQuestion[];
