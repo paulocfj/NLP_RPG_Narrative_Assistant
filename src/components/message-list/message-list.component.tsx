@@ -1,17 +1,18 @@
 import React, { type ForwardedRef } from 'react'; // Importe 'ForwardedRef'
-import type { Message } from '../../types';
 import { MessageComponent } from '../message/message.component';
+import { useChatMessages } from '../../contexts';
 
 type MessageListProps = {
-  messages: Message[];
   onSuggestionClick: (text: string) => void;
 };
 
 const MessageList = React.forwardRef(
   (
-    { messages, onSuggestionClick }: MessageListProps,
+    { onSuggestionClick }: MessageListProps,
     ref: ForwardedRef<HTMLDivElement>,
   ) => {
+    const messages = useChatMessages();
+
     return (
       <div className="flex-grow p-4 overflow-y-auto flex flex-col space-y-3">
         {messages.map((msg) => (

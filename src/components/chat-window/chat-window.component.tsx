@@ -4,6 +4,7 @@ import { SendMessageForm } from '../send-message-form/send-message-form.componen
 import { InitialGuide, MedievalTheme } from '../../data';
 import type { CompleteGuide, Message, NpcChallenge } from '../../types';
 import { ScenarioDraftSummaryComponent } from '../scenario-draft-summary/scenario-draft-summary.component';
+import { useChatActions, useChatMessages } from '../../contexts';
 
 let messageIdCounter = 0;
 const getNextMessageId = () => messageIdCounter++;
@@ -12,11 +13,13 @@ const SENDER_USER = 'user';
 
 const ChatWindow = () => {
   // Nota: O estado 'messages' armazena o tipo Message + as propriedades extendidas (suggestions, isStatus)
-  const [messages, setMessages] = useState<Message[]>([]);
+  //const [messages, setMessages] = useState<Message[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [scenarioDraft, setScenarioDraft] = useState<CompleteGuide>([]);
   const [isFinished, setIsFinished] = useState(false);
   const [inputPreFill, setInputPreFill] = useState('');
+  const { addMessage, setMessages } = useChatActions(); // SET de mensagens
+  const messages = useChatMessages();
 
   const currentQuestion = InitialGuide[currentQuestionIndex];
   const totalQuestions = InitialGuide.length;
@@ -89,7 +92,7 @@ const ChatWindow = () => {
     };
 
     setMessages([initialMessage, firstQuestion]);
-  }, [formatBotQuestion, messages.length, totalQuestions]);
+  }, [formatBotQuestion, messages.length, setMessages, totalQuestions]);
 
   // Efeito para rolar o chat para baixo
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -119,7 +122,8 @@ const ChatWindow = () => {
         isStatus: false,
       };
 
-      setMessages((prev) => [...prev, userMessage]);
+      //setMessages((prev) => [...prev, userMessage]);
+      addMessage(userMessage);
 
       // 1. Armazena a resposta no rascunho
       setScenarioDraft((prev) => [
@@ -145,7 +149,8 @@ const ChatWindow = () => {
           isStatus: true,
         };
 
-        setMessages((prev) => [...prev, finalMessage]);
+        //setMessages((prev) => [...prev, finalMessage]);
+        addMessage(finalMessage);
         return;
       }
 
@@ -162,12 +167,14 @@ const ChatWindow = () => {
 
       // 4. Atualiza o estado
       setCurrentQuestionIndex(nextQuestionIndex);
-      setMessages((prev) => [...prev, botQuestionMessage]);
+      //setMessages((prev) => [...prev, botQuestionMessage]);
+      addMessage(botQuestionMessage);
     },
     [
-      currentQuestionIndex,
       isFinished,
       currentQuestion,
+      addMessage,
+      currentQuestionIndex,
       formatBotQuestion,
       totalQuestions,
     ],
@@ -190,7 +197,6 @@ const ChatWindow = () => {
       {/* Área de Mensagens e Rascunho */}
       <div className="flex-1 flex flex-col overflow-y-auto">
         <MessageList
-          messages={messages}
           onSuggestionClick={handleSuggestionClick}
           ref={messagesEndRef}
         />
