@@ -1,0 +1,22 @@
+import type { ReactNode } from 'react';
+import type { CoreQuestionsGuide } from '../../types';
+
+type GuideAction =
+  | {
+      type: 'INITIALIZE_GUIDE';
+      payload: CoreQuestionsGuide;
+    }
+  | {
+      type: 'UPDATE_RESPONSE';
+      payload: {
+        question: string;
+        userResponse: string;
+      };
+    }
+  | { type: 'RESET_GUIDE' };
+
+type CompleteGuideProviderProps = {
+  children: ReactNode;
+};
+
+export type { GuideAction, CompleteGuideProviderProps };
