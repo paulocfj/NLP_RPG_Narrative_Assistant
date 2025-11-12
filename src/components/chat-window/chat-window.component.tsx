@@ -2,9 +2,13 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { MessageList } from '../message-list/message-list.component';
 import { SendMessageForm } from '../send-message-form/send-message-form.component';
 import { InitialGuide, MedievalTheme } from '../../data';
-import type { CompleteGuide, Message, NpcChallenge } from '../../types';
+import type { Message, NpcChallenge } from '../../types';
 import { ScenarioDraftSummaryComponent } from '../scenario-draft-summary/scenario-draft-summary.component';
 import { useChatActions, useChatMessages } from '../../contexts';
+import {
+  useCompleteGuideDispatch,
+  useCompleteGuideState,
+} from '../../contexts/complete-guide';
 
 let messageIdCounter = 0;
 const getNextMessageId = () => messageIdCounter++;
@@ -15,11 +19,12 @@ const ChatWindow = () => {
   // Nota: O estado 'messages' armazena o tipo Message + as propriedades extendidas (suggestions, isStatus)
   //const [messages, setMessages] = useState<Message[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [scenarioDraft, setScenarioDraft] = useState<CompleteGuide>([]);
   const [isFinished, setIsFinished] = useState(false);
   const [inputPreFill, setInputPreFill] = useState('');
   const { addMessage, setMessages } = useChatActions(); // SET de mensagens
   const messages = useChatMessages();
+  const scenarioDraft = useCompleteGuideState();
+  const dispatchGuide = useCompleteGuideDispatch();
 
   const currentQuestion = InitialGuide[currentQuestionIndex];
   const totalQuestions = InitialGuide.length;
@@ -73,6 +78,11 @@ const ChatWindow = () => {
   useEffect(() => {
     if (messages.length > 0) return;
 
+    dispatchGuide({
+      type: 'INITIALIZE_GUIDE',
+      payload: InitialGuide, // O reducer irá mapear isso para o estado inicial
+    });
+
     const initialMessage: Message = {
       id: getNextMessageId(),
       text: `<strong>Saudações, Mestre!</strong> Seja bem-vindo ao seu Guia de Cenário RPG. Vamos criar uma aventura épica OneShot em ${totalQuestions} passos!`,
@@ -92,7 +102,13 @@ const ChatWindow = () => {
     };
 
     setMessages([initialMessage, firstQuestion]);
-  }, [formatBotQuestion, messages.length, setMessages, totalQuestions]);
+  }, [
+    dispatchGuide,
+    formatBotQuestion,
+    messages.length,
+    setMessages,
+    totalQuestions,
+  ]);
 
   // Efeito para rolar o chat para baixo
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -126,13 +142,13 @@ const ChatWindow = () => {
       addMessage(userMessage);
 
       // 1. Armazena a resposta no rascunho
-      setScenarioDraft((prev) => [
-        ...prev,
-        {
+      dispatchGuide({
+        type: 'UPDATE_RESPONSE',
+        payload: {
           question: currentQuestion.question,
           userResponse: text,
         },
-      ]);
+      });
 
       const nextQuestionIndex = currentQuestionIndex + 1;
       const isLastQuestion = nextQuestionIndex >= InitialGuide.length;
@@ -174,6 +190,7 @@ const ChatWindow = () => {
       isFinished,
       currentQuestion,
       addMessage,
+      dispatchGuide,
       currentQuestionIndex,
       formatBotQuestion,
       totalQuestions,

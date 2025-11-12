@@ -52,8 +52,7 @@ export type ThematicScenario = {
 /** The main thematic suggestions object is an array of Scenarios. */
 export type ThematicScenarioCollection = ThematicScenario[];
 
-export type GuideQuestion = {
-  question: string;
+export type GuideQuestion = OneShotGuideQuestion & {
   userResponse: string;
 };
 
