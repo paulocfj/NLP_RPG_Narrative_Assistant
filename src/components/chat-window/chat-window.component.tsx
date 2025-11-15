@@ -4,11 +4,11 @@ import { SendMessageForm } from '../send-message-form/send-message-form.componen
 import { InitialGuide, MedievalTheme } from '../../data';
 import type { Message, NpcChallenge } from '../../types';
 import { ScenarioDraftSummaryComponent } from '../scenario-draft-summary/scenario-draft-summary.component';
-import { useChatActions, useChatMessages } from '../../contexts';
 import {
   useCompleteGuideDispatch,
   useCompleteGuideState,
 } from '../../contexts/complete-guide';
+import { useChatDispatch, useChatState } from '../../contexts';
 
 let messageIdCounter = 0;
 const getNextMessageId = () => messageIdCounter++;
@@ -21,14 +21,34 @@ const ChatWindow = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
   const [inputPreFill, setInputPreFill] = useState('');
-  const { addMessage, setMessages } = useChatActions(); // SET de mensagens
-  const messages = useChatMessages();
+  const dispatchChat = useChatDispatch(); // SET de mensagens
+  const messages = useChatState();
   const scenarioDraft = useCompleteGuideState();
   const dispatchGuide = useCompleteGuideDispatch();
 
   const currentQuestion = InitialGuide[currentQuestionIndex];
   const totalQuestions = InitialGuide.length;
   const progressText = `Passo ${currentQuestionIndex + 1} de ${totalQuestions}`;
+
+  const addMessage = useCallback(
+    (message: Message) => {
+      dispatchChat({
+        type: 'ADD_MESSAGE',
+        message: message,
+      });
+    },
+    [dispatchChat],
+  );
+
+  const setMessages = useCallback(
+    (newMessages: Message[]) => {
+      dispatchChat({
+        type: 'SET_MESSAGES',
+        messages: newMessages,
+      });
+    },
+    [dispatchChat],
+  );
 
   /**
    * Normaliza um item de sugestão para uma string.
