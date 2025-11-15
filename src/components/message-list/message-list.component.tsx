@@ -1,6 +1,6 @@
 import React, { type ForwardedRef } from 'react'; // Importe 'ForwardedRef'
 import { MessageComponent } from '../message/message.component';
-import { useChatMessages } from '../../contexts';
+import { useChatState } from '../../contexts';
 
 type MessageListProps = {
   onSuggestionClick: (text: string) => void;
@@ -11,7 +11,7 @@ const MessageList = React.forwardRef(
     { onSuggestionClick }: MessageListProps,
     ref: ForwardedRef<HTMLDivElement>,
   ) => {
-    const messages = useChatMessages();
+    const messages = useChatState();
 
     return (
       <div className="flex-grow p-4 overflow-y-auto flex flex-col space-y-3">

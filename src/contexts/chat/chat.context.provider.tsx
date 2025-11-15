@@ -1,42 +1,24 @@
-import { useMemo, useState } from 'react';
-import type { ChatActions, ChatProviderProps } from './chat.context.type';
-import type { Message } from '../../types';
-import { ChatActionsContext, ChatMessagesContext } from './chat.context';
+import type { ChatProviderProps } from './chat.context.types';
+import { ChatDispatchContext, ChatStateContext } from './chat.context';
+import { chatReducer, initialState } from './chat.context.reducer';
+import { useReducer } from 'react';
 
 /**
  * Provider principal para o Contexto de Chat.
  * Gerencia o estado das mensagens e fornece as ações.
  */
-export const ChatProvider: React.FC<ChatProviderProps> = ({
-  children,
-  initialMessages = [],
-}) => {
-  const [messages, setMessages] = useState<Message[]>(initialMessages);
-
-  // Memoiza as ações para garantir que a referência das funções só mude
-  // se houver uma mudança de dependência externa (o que não acontece aqui).
-  const actions = useMemo<ChatActions>(
-    () => ({
-      addMessage: (message: Message) => {
-        setMessages((prev) => [...prev, message]);
-      },
-      clearMessages: () => {
-        setMessages([]);
-      },
-      setMessages: (newMessages: Message[]) => {
-        setMessages(newMessages);
-      },
-    }),
-    [],
-  );
+const ChatProvider = ({ children }: ChatProviderProps) => {
+  const [state, dispatch] = useReducer(chatReducer, initialState);
 
   return (
     // Otimização: Componentes que só precisam das ações não serão renderizados
     // quando a lista de mensagens (messages) mudar, e vice-versa.
-    <ChatActionsContext.Provider value={actions}>
-      <ChatMessagesContext.Provider value={messages}>
+    <ChatStateContext.Provider value={state}>
+      <ChatDispatchContext.Provider value={dispatch}>
         {children}
-      </ChatMessagesContext.Provider>
-    </ChatActionsContext.Provider>
+      </ChatDispatchContext.Provider>
+    </ChatStateContext.Provider>
   );
 };
+
+export { ChatProvider };
