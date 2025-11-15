@@ -4,11 +4,9 @@ import { SendMessageForm } from '../send-message-form/send-message-form.componen
 import { InitialGuide, MedievalTheme } from '../../data';
 import type { Message, NpcChallenge } from '../../types';
 import { ScenarioDraftSummaryComponent } from '../scenario-draft-summary/scenario-draft-summary.component';
-import {
-  useCompleteGuideDispatch,
-  useCompleteGuideState,
-} from '../../contexts/complete-guide';
-import { useChatDispatch, useChatState } from '../../contexts';
+import { useCompleteGuideState } from '../../contexts/complete-guide';
+import { useChatState } from '../../contexts';
+import { useChatMessage, useGuide } from '../../hooks';
 
 let messageIdCounter = 0;
 const getNextMessageId = () => messageIdCounter++;
@@ -16,39 +14,17 @@ const SENDER_BOT = 'bot';
 const SENDER_USER = 'user';
 
 const ChatWindow = () => {
-  // Nota: O estado 'messages' armazena o tipo Message + as propriedades extendidas (suggestions, isStatus)
-  //const [messages, setMessages] = useState<Message[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
   const [inputPreFill, setInputPreFill] = useState('');
-  const dispatchChat = useChatDispatch(); // SET de mensagens
   const messages = useChatState();
   const scenarioDraft = useCompleteGuideState();
-  const dispatchGuide = useCompleteGuideDispatch();
+  const { addMessage, setMessages } = useChatMessage();
+  const { initializeGuide, updateResponse } = useGuide();
 
   const currentQuestion = InitialGuide[currentQuestionIndex];
   const totalQuestions = InitialGuide.length;
   const progressText = `Passo ${currentQuestionIndex + 1} de ${totalQuestions}`;
-
-  const addMessage = useCallback(
-    (message: Message) => {
-      dispatchChat({
-        type: 'ADD_MESSAGE',
-        message: message,
-      });
-    },
-    [dispatchChat],
-  );
-
-  const setMessages = useCallback(
-    (newMessages: Message[]) => {
-      dispatchChat({
-        type: 'SET_MESSAGES',
-        messages: newMessages,
-      });
-    },
-    [dispatchChat],
-  );
 
   /**
    * Normaliza um item de sugestão para uma string.
@@ -98,10 +74,7 @@ const ChatWindow = () => {
   useEffect(() => {
     if (messages.length > 0) return;
 
-    dispatchGuide({
-      type: 'INITIALIZE_GUIDE',
-      payload: InitialGuide, // O reducer irá mapear isso para o estado inicial
-    });
+    initializeGuide(InitialGuide);
 
     const initialMessage: Message = {
       id: getNextMessageId(),
@@ -115,7 +88,7 @@ const ChatWindow = () => {
     const firstQuestion: Message = {
       id: getNextMessageId(),
       text: firstQuestionData.text,
-      suggestions: firstQuestionData.suggestions, // Propriedade extendida
+      suggestions: firstQuestionData.suggestions,
       sender: SENDER_BOT,
       timestamp: new Date().toLocaleString('pt-BR'),
       isStatus: false,
@@ -123,8 +96,8 @@ const ChatWindow = () => {
 
     setMessages([initialMessage, firstQuestion]);
   }, [
-    dispatchGuide,
     formatBotQuestion,
+    initializeGuide,
     messages.length,
     setMessages,
     totalQuestions,
@@ -162,13 +135,7 @@ const ChatWindow = () => {
       addMessage(userMessage);
 
       // 1. Armazena a resposta no rascunho
-      dispatchGuide({
-        type: 'UPDATE_RESPONSE',
-        payload: {
-          question: currentQuestion.question,
-          userResponse: text,
-        },
-      });
+      updateResponse(currentQuestion.question, text);
 
       const nextQuestionIndex = currentQuestionIndex + 1;
       const isLastQuestion = nextQuestionIndex >= InitialGuide.length;
@@ -210,7 +177,7 @@ const ChatWindow = () => {
       isFinished,
       currentQuestion,
       addMessage,
-      dispatchGuide,
+      updateResponse,
       currentQuestionIndex,
       formatBotQuestion,
       totalQuestions,
