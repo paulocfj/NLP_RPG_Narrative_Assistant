@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import type { CoreQuestionsGuide } from '../../types';
 
-type GuideAction =
+type GuideActions =
   | {
       type: 'INITIALIZE_GUIDE';
       payload: CoreQuestionsGuide;
@@ -19,4 +19,4 @@ type CompleteGuideProviderProps = {
   children: ReactNode;
 };
 
-export type { GuideAction, CompleteGuideProviderProps };
+export type { GuideActions, CompleteGuideProviderProps };

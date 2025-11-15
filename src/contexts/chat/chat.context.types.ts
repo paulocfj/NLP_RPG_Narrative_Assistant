@@ -3,7 +3,6 @@ import type { Message } from '../../types';
 
 type ChatProviderProps = {
   children: ReactNode;
-  initialMessages?: Message[];
 };
 
 /**
@@ -13,10 +12,17 @@ type ChatProviderProps = {
  * @property {() => void} clearMessages - Clears all messages from the chat.
  * @property {(messages: Message[]) => void} setMessages - Sets the complete list of messages (useful for initialization/loading).
  */
-type ChatActions = {
-  addMessage: (message: Message) => void;
-  clearMessages: () => void;
-  setMessages: (messages: Message[]) => void;
-};
+type ChatActions =
+  | {
+      type: 'ADD_MESSAGE';
+      message: Message;
+    }
+  | {
+      type: 'CLEAR_MESSAGES';
+    }
+  | {
+      type: 'SET_MESSAGES';
+      messages: Message[];
+    };
 
 export type { ChatProviderProps, ChatActions };

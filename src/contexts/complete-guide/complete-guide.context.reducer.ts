@@ -1,5 +1,5 @@
 import type { CompleteGuide } from '../../types';
-import type { GuideAction } from './complete-guide.context.types';
+import type { GuideActions } from './complete-guide.context.types';
 
 /** O estado inicial (um guia vazio) */
 const initialState: CompleteGuide = [];
@@ -7,7 +7,7 @@ const initialState: CompleteGuide = [];
 /** O Reducer que gerencia a lógica de atualização do estado */
 const completeGuideReducer = (
   state: CompleteGuide,
-  action: GuideAction,
+  action: GuideActions,
 ): CompleteGuide => {
   switch (action.type) {
     case 'INITIALIZE_GUIDE':
