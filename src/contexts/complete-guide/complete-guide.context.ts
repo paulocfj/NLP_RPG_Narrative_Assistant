@@ -1,6 +1,6 @@
 import { createContext, type Dispatch } from 'react';
 import type { CompleteGuide } from '../../types';
-import type { GuideAction } from './complete-guide.context.types';
+import type { GuideActions } from './complete-guide.context.types';
 
 const CompleteGuideStateContext = createContext<CompleteGuide | undefined>(
   undefined,
@@ -8,7 +8,7 @@ const CompleteGuideStateContext = createContext<CompleteGuide | undefined>(
 
 /** Contexto para o DISPATCH (Set) */
 const CompleteGuideDispatchContext = createContext<
-  Dispatch<GuideAction> | undefined
+  Dispatch<GuideActions> | undefined
 >(undefined);
 
 export { CompleteGuideStateContext, CompleteGuideDispatchContext };
