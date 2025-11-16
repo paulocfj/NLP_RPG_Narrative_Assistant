@@ -8,9 +8,7 @@ import { useCompleteGuideState } from '../../contexts/complete-guide';
 import { useChatState } from '../../contexts';
 import { useChatMessage, useGuide } from '../../hooks';
 import { formatBotQuestion, getNextMessageId } from '../../utils';
-
-const SENDER_BOT = 'bot';
-const SENDER_USER = 'user';
+import { SENDER_BOT, SENDER_USER } from '../../constants';
 
 const ChatWindow = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -32,7 +30,7 @@ const ChatWindow = () => {
 
     const initialMessage: Message = {
       id: getNextMessageId(),
-      text: `<strong>Saudações, Mestre!</strong> Seja bem-vindo ao seu Guia de Cenário RPG. Vamos criar uma aventura épica OneShot em ${totalQuestions} passos!`,
+      text: `Saudações, Mestre 🧙!\nSeja bem-vindo ao seu Guia de Cenário RPG. Vamos criar uma aventura épica OneShot em ${totalQuestions} passos!`,
       sender: SENDER_BOT,
       timestamp: new Date().toLocaleString('pt-BR'),
       isStatus: true,
