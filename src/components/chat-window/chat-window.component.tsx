@@ -7,10 +7,8 @@ import { ScenarioDraftSummaryComponent } from '../scenario-draft-summary/scenari
 import { useCompleteGuideState } from '../../contexts/complete-guide';
 import { useChatState } from '../../contexts';
 import { useChatMessage, useGuide } from '../../hooks';
-import { formatBotQuestion } from '../../utils';
+import { formatBotQuestion, getNextMessageId } from '../../utils';
 
-let messageIdCounter = 0;
-const getNextMessageId = () => messageIdCounter++;
 const SENDER_BOT = 'bot';
 const SENDER_USER = 'user';
 
