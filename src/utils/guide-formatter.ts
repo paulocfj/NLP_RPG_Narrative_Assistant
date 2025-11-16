@@ -2,8 +2,9 @@ import type {
   FormattedQuestion,
   NpcChallenge,
   OneShotGuideQuestion,
+  ThematicScenario,
 } from '../types';
-import { InitialGuide, MedievalTheme } from '../data'; // Importe os dados necessários
+import { InitialGuide } from '../data';
 
 /**
  * @function normalizeSuggestion
@@ -28,16 +29,19 @@ const normalizeSuggestion = (item: string | NpcChallenge): string => {
   // Returns an empty string as a safe fallback
   return '';
 };
-
 /**
  * @function formatBotQuestion
  * @description Formats the bot's question text (adding strong tags) and extracts
- * relevant thematic suggestions from the data source for that question index.
+ * relevant thematic suggestions based on the currently active scenario object provided.
  *
  * @param {number} questionIndex The index of the question in the InitialGuide array.
- * @returns {{ text: string, suggestions: string[] | undefined }} An object containing the formatted question text and an optional list of suggestions (max 3).
+ * @param {ThematicScenario} activeScenario The specific scenario object (chosen by the theme context) used to source suggestions. <-- NOVO ARGUMENTO
+ * @returns {FormattedQuestion} An object containing the formatted question text and an optional list of suggestions (max 3).
  */
-const formatBotQuestion = (questionIndex: number): FormattedQuestion => {
+const formatBotQuestion = (
+  questionIndex: number,
+  activeScenario: ThematicScenario, // <-- NOVO PARÂMETRO
+): FormattedQuestion => {
   const questionData: OneShotGuideQuestion | undefined =
     InitialGuide[questionIndex];
 
@@ -45,14 +49,12 @@ const formatBotQuestion = (questionIndex: number): FormattedQuestion => {
 
   const questionText = `<strong>${questionData.question}</strong>`;
 
-  // Assumes MedievalTheme[4] is the scenario you are targeting
-  const scenarioSection = MedievalTheme[4].themeSuggestions.find(
+  const scenarioSection = activeScenario.themeSuggestions.find(
     (s) => s.id === questionData.id,
   );
 
   const rawSuggestions = scenarioSection?.suggestion || [];
 
-  // Maps the array of suggestions (string[] | NpcChallenge[]) to string[] using normalizeSuggestion
   const suggestions: string[] = rawSuggestions
     .map(normalizeSuggestion)
     .slice(0, 3)

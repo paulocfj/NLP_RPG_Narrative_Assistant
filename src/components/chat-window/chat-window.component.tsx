@@ -9,6 +9,7 @@ import { useChatState } from '../../contexts';
 import { useChatMessage, useGuide } from '../../hooks';
 import { formatBotQuestion, getNextMessageId } from '../../utils';
 import { SENDER_BOT, SENDER_USER } from '../../constants';
+import { useThemeState } from '../../contexts/theme';
 
 const ChatWindow = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -18,6 +19,7 @@ const ChatWindow = () => {
   const scenarioDraft = useCompleteGuideState();
   const { addMessage, setMessages } = useChatMessage();
   const { initializeGuide, updateResponse } = useGuide();
+  const themeScenario = useThemeState();
 
   const currentQuestion = InitialGuide[currentQuestionIndex];
   const totalQuestions = InitialGuide.length;
@@ -36,7 +38,10 @@ const ChatWindow = () => {
       isStatus: true,
     };
 
-    const firstQuestionData = formatBotQuestion(0);
+    const firstQuestionData = formatBotQuestion(
+      0,
+      themeScenario.activeScenario,
+    );
     const firstQuestion: Message = {
       id: getNextMessageId(),
       text: firstQuestionData.text,
@@ -47,7 +52,13 @@ const ChatWindow = () => {
     };
 
     setMessages([initialMessage, firstQuestion]);
-  }, [initializeGuide, messages.length, setMessages, totalQuestions]);
+  }, [
+    initializeGuide,
+    messages.length,
+    setMessages,
+    themeScenario.activeScenario,
+    totalQuestions,
+  ]);
 
   // Efeito para rolar o chat para baixo
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -104,7 +115,10 @@ const ChatWindow = () => {
       }
 
       // 3. Prepara e envia a próxima pergunta
-      const nextQuestionData = formatBotQuestion(nextQuestionIndex);
+      const nextQuestionData = formatBotQuestion(
+        nextQuestionIndex,
+        themeScenario.activeScenario,
+      );
       const botQuestionMessage: Message = {
         id: getNextMessageId(),
         text: nextQuestionData.text,
@@ -125,6 +139,7 @@ const ChatWindow = () => {
       addMessage,
       updateResponse,
       currentQuestionIndex,
+      themeScenario.activeScenario,
       totalQuestions,
     ],
   );
