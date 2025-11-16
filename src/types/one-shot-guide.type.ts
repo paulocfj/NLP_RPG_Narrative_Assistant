@@ -1,4 +1,16 @@
 /**
+ * @typedef {object} FormattedQuestion
+ * @description Defines the structure for a bot question's output after formatting and suggestion extraction.
+ *
+ * @property {string} text The question text, often including HTML formatting (e.g., <strong> tags).
+ * @property {string[] | undefined} [suggestions] An optional list of clean, normalized reply suggestions (max 3).
+ */
+type FormattedQuestion = {
+  text: string;
+  suggestions: string[] | undefined;
+};
+
+/**
  * @typedef {'INTRO' | 'PICK ONE GOAL' | 'PACE' | 'STRUCTURE' | 'STREAMLINE'} GuidePillar
  * @description Defines the type for the guide's pillars/sections.
  */
@@ -105,6 +117,7 @@ type CompleteGuide = GuideQuestion[];
 export type {
   CompleteGuide,
   CoreQuestionsGuide,
+  FormattedQuestion,
   GuidePillar,
   GuideQuestion,
   GuideTheme,

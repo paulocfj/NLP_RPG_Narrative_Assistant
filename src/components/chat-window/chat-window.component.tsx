@@ -1,17 +1,15 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { MessageList } from '../message-list/message-list.component';
 import { SendMessageForm } from '../send-message-form/send-message-form.component';
-import { InitialGuide, MedievalTheme } from '../../data';
-import type { Message, NpcChallenge } from '../../types';
+import { InitialGuide } from '../../data';
+import type { Message } from '../../types';
 import { ScenarioDraftSummaryComponent } from '../scenario-draft-summary/scenario-draft-summary.component';
 import { useCompleteGuideState } from '../../contexts/complete-guide';
 import { useChatState } from '../../contexts';
 import { useChatMessage, useGuide } from '../../hooks';
-
-let messageIdCounter = 0;
-const getNextMessageId = () => messageIdCounter++;
-const SENDER_BOT = 'bot';
-const SENDER_USER = 'user';
+import { formatBotQuestion, getNextMessageId } from '../../utils';
+import { SENDER_BOT, SENDER_USER } from '../../constants';
+import { useThemeState } from '../../contexts/theme';
 
 const ChatWindow = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -21,55 +19,11 @@ const ChatWindow = () => {
   const scenarioDraft = useCompleteGuideState();
   const { addMessage, setMessages } = useChatMessage();
   const { initializeGuide, updateResponse } = useGuide();
+  const themeScenario = useThemeState();
 
   const currentQuestion = InitialGuide[currentQuestionIndex];
   const totalQuestions = InitialGuide.length;
   const progressText = `Passo ${currentQuestionIndex + 1} de ${totalQuestions}`;
-
-  /**
-   * Normaliza um item de sugestão para uma string.
-   * Se for NpcChallenge, extrai o texto do desafio e remove o que estiver entre colchetes.
-   * @param item O item da sugestão, que pode ser string ou NpcChallenge.
-   * @returns A sugestão como string.
-   */
-  function normalizeSuggestion(item: string | NpcChallenge): string {
-    if (typeof item === 'string') {
-      return item;
-    }
-
-    if (item && typeof item === 'object' && 'challenge' in item) {
-      // Caso NpcChallenge: Extrai o texto do desafio e remove o conteúdo entre colchetes
-      return item.challenge.replace(/\[[^\]]+\]/g, '').trim();
-    }
-
-    // Retorna uma string vazia como fallback seguro
-    return '';
-  }
-
-  // Função que retorna o texto e a lista de sugestões separadamente.
-  const formatBotQuestion = useCallback((questionIndex: number) => {
-    const questionData = InitialGuide[questionIndex];
-    if (!questionData) return { text: '', suggestions: undefined };
-
-    const questionText = `<strong>${questionData.question}</strong>`;
-    const scenarioSection = MedievalTheme[4].themeSuggestions.find(
-      (s) => s.id === questionData.id,
-    );
-
-    const rawSuggestions = scenarioSection?.suggestion || [];
-
-    // 1. Mapeia o array de sugestões (que pode ser string[] | NpcChallenge[])
-    // 2. Chama normalizeSuggestion para cada item, garantindo que o resultado seja string.
-    const suggestions: string[] = rawSuggestions
-      .map(normalizeSuggestion)
-      .slice(0, 3)
-      .filter((text) => text.length > 0); // Opcional: Remove sugestões vazias após a normalização
-    return {
-      text: questionText,
-      suggestions: suggestions ?? [],
-    };
-  }, []);
-
   // Efeito para iniciar o chat com a primeira pergunta
   useEffect(() => {
     if (messages.length > 0) return;
@@ -78,13 +32,16 @@ const ChatWindow = () => {
 
     const initialMessage: Message = {
       id: getNextMessageId(),
-      text: `<strong>Saudações, Mestre!</strong> Seja bem-vindo ao seu Guia de Cenário RPG. Vamos criar uma aventura épica OneShot em ${totalQuestions} passos!`,
+      text: `Saudações, Mestre 🧙!\nSeja bem-vindo ao seu Guia de Cenário RPG. Vamos criar uma aventura épica OneShot em ${totalQuestions} passos!`,
       sender: SENDER_BOT,
       timestamp: new Date().toLocaleString('pt-BR'),
       isStatus: true,
     };
 
-    const firstQuestionData = formatBotQuestion(0);
+    const firstQuestionData = formatBotQuestion(
+      0,
+      themeScenario.activeScenario,
+    );
     const firstQuestion: Message = {
       id: getNextMessageId(),
       text: firstQuestionData.text,
@@ -96,10 +53,10 @@ const ChatWindow = () => {
 
     setMessages([initialMessage, firstQuestion]);
   }, [
-    formatBotQuestion,
     initializeGuide,
     messages.length,
     setMessages,
+    themeScenario.activeScenario,
     totalQuestions,
   ]);
 
@@ -158,7 +115,10 @@ const ChatWindow = () => {
       }
 
       // 3. Prepara e envia a próxima pergunta
-      const nextQuestionData = formatBotQuestion(nextQuestionIndex);
+      const nextQuestionData = formatBotQuestion(
+        nextQuestionIndex,
+        themeScenario.activeScenario,
+      );
       const botQuestionMessage: Message = {
         id: getNextMessageId(),
         text: nextQuestionData.text,
@@ -179,7 +139,7 @@ const ChatWindow = () => {
       addMessage,
       updateResponse,
       currentQuestionIndex,
-      formatBotQuestion,
+      themeScenario.activeScenario,
       totalQuestions,
     ],
   );
