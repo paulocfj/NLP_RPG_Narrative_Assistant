@@ -7,11 +7,13 @@ import type { CoreQuestionsGuide } from '../../types';
  * @property {(guide: CoreQuestionsGuide) => void} initializeGuide Function to set the initial structure of the guide questions.
  * @property {() => void} resetGuide Function to clear all user responses in the guide, reverting them to empty strings.
  * @property {(question: string, userResponse: string) => void} updateResponse Function to update the user's response for a specific question in the guide.
+ * @property {() => void} completeGuide Function to set the isFinished flag to true in the guide state.
  */
 type UseGuideReturn = {
   initializeGuide: (guide: CoreQuestionsGuide) => void;
   resetGuide: () => void;
   updateResponse: (question: string, userResponse: string) => void;
+  completeGuide: () => void; // Added function for completeness
 };
 
 /**
@@ -64,7 +66,16 @@ const useGuide = (): UseGuideReturn => {
     [dispatch],
   );
 
-  return { initializeGuide, resetGuide, updateResponse };
+  /**
+   * Dispatches the action to mark the guide as completed.
+   * This sets the global isFinished flag to true in the context state.
+   * The function is memoized using `useCallback`.
+   */
+  const completeGuide = useCallback(() => {
+    dispatch({ type: 'GUIDE_COMPLETED' });
+  }, [dispatch]);
+
+  return { initializeGuide, resetGuide, updateResponse, completeGuide };
 };
 
 export { useGuide };

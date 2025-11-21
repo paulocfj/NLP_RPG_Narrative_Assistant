@@ -14,18 +14,26 @@ import { GeneratedStoryDisplay } from '../generated-history/generated-history-di
 
 const ChatWindow = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [isFinished, setIsFinished] = useState(false);
   const [inputPreFill, setInputPreFill] = useState('');
+
   const messages = useChatState();
-  const scenarioDraft = useCompleteGuideState();
+
+  // 💡 ACESSANDO ESTADO GLOBAL: isFinished e o rascunho (guideQuestions)
+  const { isFinished, guideQuestions } = useCompleteGuideState();
+
   const { addMessage, setMessages } = useChatMessage();
-  const { initializeGuide, updateResponse } = useGuide();
+
+  // 💡 USANDO A FUNÇÃO GLOBAL completeGuide
+  const { initializeGuide, updateResponse, completeGuide } = useGuide();
+
   const themeScenario = useThemeState();
 
   const currentQuestion = InitialGuide[currentQuestionIndex];
   const totalQuestions = InitialGuide.length;
+
   const progressText = `Passo ${currentQuestionIndex + 1} de ${totalQuestions}`;
-  // Efeito para iniciar o chat com a primeira pergunta
+
+  // Efeito para iniciar o chat (Lógica de inicialização mantida)
   useEffect(() => {
     if (messages.length > 0) return;
 
@@ -64,23 +72,23 @@ const ChatWindow = () => {
   // Efeito para rolar o chat para baixo
   const messagesEndRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
+    // ✅ Rolagem disparada sempre que as mensagens mudam.
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Função para preencher o input com o texto da sugestão clicada
+  // Função para preencher o input (inalterada)
   const handleSuggestionClick = useCallback((text: string) => {
     setInputPreFill(text);
   }, []);
 
-  // Função principal para lidar com o envio de mensagens do usuário
+  // Função principal para envio
   const handleSendMessage = useCallback(
     (text: string) => {
+      // isFinished agora vem do estado global (useCompleteGuideState)
       if (isFinished || !currentQuestion) return;
 
-      // Limpa o preenchimento automático após o envio
       setInputPreFill('');
 
-      // Cria a mensagem base do usuário
       const userMessage: Message = {
         id: getNextMessageId(),
         text: text,
@@ -89,33 +97,29 @@ const ChatWindow = () => {
         isStatus: false,
       };
 
-      //setMessages((prev) => [...prev, userMessage]);
       addMessage(userMessage);
 
-      // 1. Armazena a resposta no rascunho
       updateResponse(currentQuestion.question, text);
 
       const nextQuestionIndex = currentQuestionIndex + 1;
       const isLastQuestion = nextQuestionIndex >= InitialGuide.length;
 
-      // 2. Verifica se o fluxo terminou
       if (isLastQuestion) {
-        setIsFinished(true);
+        // 💡 CHAMA A FUNÇÃO GLOBAL
+        completeGuide();
 
         const finalMessage: Message = {
           id: getNextMessageId(),
-          text: `<strong>MISSÃO CUMPRIDA!</strong> Todas as ${totalQuestions} etapas foram concluídas com sucesso. Role a tela para baixo para revisar o seu Guia de Aventura final!`,
+          text: `**MISSÃO CUMPRIDA!**\n Todas as ${totalQuestions} etapas foram concluídas com sucesso. Role a tela para baixo para revisar o seu Guia de Aventura final!`,
           sender: SENDER_BOT,
           timestamp: new Date().toLocaleString('pt-BR'),
           isStatus: true,
         };
 
-        //setMessages((prev) => [...prev, finalMessage]);
         addMessage(finalMessage);
         return;
       }
 
-      // 3. Prepara e envia a próxima pergunta
       const nextQuestionData = formatBotQuestion(
         nextQuestionIndex,
         themeScenario.activeScenario,
@@ -123,25 +127,24 @@ const ChatWindow = () => {
       const botQuestionMessage: Message = {
         id: getNextMessageId(),
         text: nextQuestionData.text,
-        suggestions: nextQuestionData.suggestions, // Propriedade extendida
+        suggestions: nextQuestionData.suggestions,
         sender: SENDER_BOT,
         timestamp: new Date().toLocaleString('pt-BR'),
         isStatus: false,
       };
 
-      // 4. Atualiza o estado
       setCurrentQuestionIndex(nextQuestionIndex);
-      //setMessages((prev) => [...prev, botQuestionMessage]);
       addMessage(botQuestionMessage);
     },
     [
-      isFinished,
+      isFinished, // Global
       currentQuestion,
       addMessage,
       updateResponse,
       currentQuestionIndex,
       themeScenario.activeScenario,
       totalQuestions,
+      completeGuide, // Global
     ],
   );
 
@@ -155,25 +158,40 @@ const ChatWindow = () => {
         <p
           className={`text-sm mt-1 font-mono ${isFinished ? 'text-green-400' : 'text-indigo-400'}`}
         >
+          {/* ✅ Agora reflete o estado global */}
           {isFinished ? 'Status: Aventura Completa' : `Status: ${progressText}`}
         </p>
       </header>
 
       {/* Área de Mensagens e Rascunho */}
       <div className="flex-1 flex flex-col overflow-y-auto">
-        <MessageList
-          onSuggestionClick={handleSuggestionClick}
-          ref={messagesEndRef}
-        />
-        <ScenarioDraftSummaryComponent
-          isFinished={isFinished}
-          scenarioDraft={scenarioDraft}
-        />
-        {/* 2. Exibe o Gerador de Histórias APENAS SE TUDO ESTIVER FINALIZADO */}
-        {isFinished && <GeneratedStoryDisplay isFinished={isFinished} />}
+        {/* ✅ Renderiza o MessageList APENAS se não estiver finalizado */}
+        {!isFinished && (
+          <MessageList
+            onSuggestionClick={handleSuggestionClick}
+            ref={messagesEndRef} // ✅ Passa a ref para o MessageList (âncora interna)
+          />
+        )}
+
+        {/* 💡 Exibe a Seção de Resultados APENAS QUANDO FINALIZADO */}
+        {isFinished && (
+          <>
+            <ScenarioDraftSummaryComponent
+              // 💡 Passando o array de perguntas (guideQuestions)
+              guideQuestions={guideQuestions}
+              isFinished={isFinished}
+            />
+            <GeneratedStoryDisplay isFinished={isFinished} />
+            {/* 🛑 Se estiver FINALIZADO, o MessageList não está mais aqui. 
+                             Devemos colocar a âncora aqui para rolar para o final do conteúdo de resultado. */}
+            <div ref={messagesEndRef} />
+          </>
+        )}
+
+        {/* 🛑 REMOVIDO: A div de âncora duplicada {!isFinished && <div ref={messagesEndRef} />} */}
       </div>
 
-      {/* Formulário de Envio */}
+      {/* Formulário de Envio (Não Mudou) */}
       <div className="sticky bottom-0 z-10">
         <SendMessageForm
           onSendMessage={handleSendMessage}

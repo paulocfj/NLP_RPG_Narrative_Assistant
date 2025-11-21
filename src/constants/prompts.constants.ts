@@ -10,6 +10,7 @@ DIRETRIZES DE DESIGN (Baseado em Modulação Narrativa):
 3. TONE: Use uma linguagem evocativa para descrições de cenário, mas direta e técnica para regras e orientações ao mestre.
 4. GANCHOS: Certifique-se de que a motivação (Passo 2) esteja clara na Cena Inicial (Passo 1).
 5. SIMPLIFICAÇÃO: Respeite o Passo 8 (Cortes/Simplificações) rigorosamente.
+6. FORMATO LIMPO: **NUNCA** utilize aspas triplas (") ou blocos de código para envolver a resposta ou grandes seções. A formatação Markdown deve ser renderizada diretamente.
 
 FORMATO DE SAÍDA ESPERADO:
 Use Markdown com títulos, negrito e listas. A saída deve conter:

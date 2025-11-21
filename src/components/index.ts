@@ -5,3 +5,4 @@ export * from './send-message-form/send-message-form.component';
 export * from './sidebar/sidebar.component';
 export * from './scenario-draft-summary/scenario-draft-summary.component';
 export * from './generated-history/generated-history-display.component';
+export * from './suggestion/suggestion.item.component';
