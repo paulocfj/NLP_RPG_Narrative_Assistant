@@ -10,6 +10,7 @@ import { useChatMessage, useGuide } from '../../hooks';
 import { formatBotQuestion, getNextMessageId } from '../../utils';
 import { SENDER_BOT, SENDER_USER } from '../../constants';
 import { useThemeState } from '../../contexts/theme';
+import { GeneratedStoryDisplay } from '../generated-history/generated-history-display.component';
 
 const ChatWindow = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -168,6 +169,8 @@ const ChatWindow = () => {
           isFinished={isFinished}
           scenarioDraft={scenarioDraft}
         />
+        {/* 2. Exibe o Gerador de Histórias APENAS SE TUDO ESTIVER FINALIZADO */}
+        {isFinished && <GeneratedStoryDisplay isFinished={isFinished} />}
       </div>
 
       {/* Formulário de Envio */}
