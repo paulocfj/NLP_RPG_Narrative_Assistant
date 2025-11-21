@@ -3,6 +3,9 @@ import type { CoreQuestionsGuide } from '../../types';
 
 type GuideActions =
   | {
+      type: 'GUIDE_COMPLETED';
+    }
+  | {
       type: 'INITIALIZE_GUIDE';
       payload: CoreQuestionsGuide;
     }
@@ -12,6 +15,9 @@ type GuideActions =
         question: string;
         userResponse: string;
       };
+    }
+  | {
+      type: 'GUIDE_COMPLETE';
     }
   | { type: 'RESET_GUIDE' };
 

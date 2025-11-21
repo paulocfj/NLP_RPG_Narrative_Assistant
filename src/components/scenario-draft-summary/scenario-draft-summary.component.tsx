@@ -1,14 +1,12 @@
 import type { FC } from 'react';
 import type { CompleteGuide } from '../../types';
+import ReactMarkdown from 'react-markdown';
 
-type ScenarioDraftSummaryComponentProps = {
-  isFinished: boolean;
-  scenarioDraft: CompleteGuide;
-};
+type ScenarioDraftSummaryComponentProps = CompleteGuide;
 
 const ScenarioDraftSummaryComponent: FC<ScenarioDraftSummaryComponentProps> = ({
   isFinished,
-  scenarioDraft,
+  guideQuestions,
 }) => {
   if (!isFinished) return null;
 
@@ -24,7 +22,7 @@ const ScenarioDraftSummaryComponent: FC<ScenarioDraftSummaryComponentProps> = ({
         </p>
 
         <ul className="space-y-6">
-          {scenarioDraft.map((item, index) => (
+          {guideQuestions.map((item, index) => (
             <li
               key={index}
               className="p-4 bg-white rounded-md shadow-md border-l-4 border-yellow-600"
@@ -32,9 +30,16 @@ const ScenarioDraftSummaryComponent: FC<ScenarioDraftSummaryComponentProps> = ({
               <strong className="text-gray-800 block mb-2 text-lg">
                 Passo {index + 1}: {item.question}
               </strong>
-              <p className="text-gray-600 italic font-mono bg-yellow-50 p-3 rounded border border-yellow-200">
-                Resposta do Mestre: {item.userResponse || 'Não respondido.'}
-              </p>
+              <div className="text-gray-600 italic font-mono bg-yellow-50 p-3 rounded border border-yellow-200">
+                <span className="font-semibold text-sm">
+                  Respostas do Mestre:
+                </span>
+                <div className="mt-1 prose prose-sm max-w-none text-gray-600">
+                  <ReactMarkdown>
+                    {item.userResponse || '*Não respondido.*'}
+                  </ReactMarkdown>
+                </div>
+              </div>
             </li>
           ))}
         </ul>

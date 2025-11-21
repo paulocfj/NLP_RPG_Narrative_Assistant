@@ -5,7 +5,7 @@ const buildFinalPrompt = (questionnaire: CompleteGuide): string => {
   let finalPrompt =
     'Aqui estão as definições da aventura fornecidas pelo Mestre (Usuário) através do método de 9 Passos:\n\n';
 
-  questionnaire.forEach((item, index) => {
+  questionnaire.guideQuestions.forEach((item, index) => {
     const label =
       'Passo: ' +
       index +
