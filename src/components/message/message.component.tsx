@@ -1,32 +1,16 @@
 import { Zap } from 'lucide-react';
 import type { Message } from '../../types';
+import ReactMarkdown from 'react-markdown'; // Importação do componente de Markdown
+import { SENDER_USER } from '../../constants';
+import { SuggestionItem } from '../suggestion/suggestion.item.component';
 
 type MessageProps = {
   message: Message;
   onSuggestionClick: (text: string) => void;
 };
-//const SENDER_BOT = 'bot';
-const SENDER_USER = 'user';
-
-type SuggestionItemProps = {
-  text: string;
-  onClick: () => void;
-};
-
-const SuggestionItem = ({ text, onClick }: SuggestionItemProps) => (
-  <li
-    onClick={onClick}
-    className="p-2 border border-gray-600 rounded-lg bg-gray-800 hover:bg-gray-700 transition duration-150 cursor-pointer text-sm font-medium shadow-inner"
-  >
-    <span className="font-bold text-yellow-500 mr-2">➜</span> {text}
-  </li>
-);
 
 const MessageComponent = ({ message, onSuggestionClick }: MessageProps) => {
-  // message é o objeto Message base
   const isUser = message.sender === SENDER_USER;
-
-  // Se for uma mensagem de status/introdução do BOT (e não do USER)
   if (message.isStatus && !isUser) {
     return (
       <div className="flex max-w-[90%] my-2 justify-center">
@@ -38,15 +22,11 @@ const MessageComponent = ({ message, onSuggestionClick }: MessageProps) => {
     );
   }
 
-  // Classes e ícones baseados no componente fornecido pelo usuário
   const bubbleClasses = isUser
     ? 'bg-indigo-600 text-white rounded-tl-xl rounded-br-xl shadow-lg border border-indigo-700'
     : 'bg-gray-700 text-gray-200 rounded-tr-xl rounded-bl-xl border border-gray-600';
 
-  // Ícones de emoji para Mago/Usuário e Mago/Bot
   const icon = isUser ? '🧙' : '🧙‍♂️';
-
-  // Verifica a propriedade 'suggestions' recebida por prop
   const hasSuggestions = message.suggestions && message.suggestions.length > 0;
 
   return (
@@ -56,20 +36,14 @@ const MessageComponent = ({ message, onSuggestionClick }: MessageProps) => {
           isUser ? 'ml-auto' : 'mr-auto'
         }`}
       >
-        {/* Ícone de Emoji */}
         <span
           className={`text-xl mr-2 ${isUser ? 'text-yellow-300' : 'text-green-400'}`}
         >
           {icon}
         </span>
-
-        {/* Bolha da Mensagem */}
         <div className={`flex-shrink ${bubbleClasses}`}>
           <div className="p-4 prose prose-sm prose-invert">
-            {/* Renderiza o texto principal (pergunta/resposta) - message.text é string */}
-            <div dangerouslySetInnerHTML={{ __html: message.text }} />
-
-            {/* Renderiza as sugestões clicáveis se houver */}
+            <ReactMarkdown>{message.text}</ReactMarkdown>
             {hasSuggestions && (
               <div className="mt-4 pt-3 border-t border-gray-600 w-full">
                 <p className="text-gray-300 mb-2 text-xs font-normal">

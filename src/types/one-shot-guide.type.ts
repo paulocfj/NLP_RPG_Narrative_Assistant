@@ -109,10 +109,15 @@ type GuideQuestion = OneShotGuideQuestion & {
 };
 
 /**
- * @typedef {GuideQuestion[]} CompleteGuide
- * @description The complete guide, consisting of an array of guide questions with the user's responses filled in.
+ * @typedef {Object} CompleteGuide
+ * @description O estado completo do guia de aventura, incluindo todas as perguntas e a flag de conclusão.
+ * @property {GuideQuestion[]} guideQuestions - O array de perguntas do guia, preenchido com as respostas do usuário.
+ * @property {boolean} isFinished - Flag booleana que indica se todas as 9 etapas do guia foram respondidas (estado de conclusão).
  */
-type CompleteGuide = GuideQuestion[];
+type CompleteGuide = {
+  guideQuestions: GuideQuestion[];
+  isFinished: boolean; // Corrigido de isfinnished
+};
 
 export type {
   CompleteGuide,

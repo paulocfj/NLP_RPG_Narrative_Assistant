@@ -47,7 +47,7 @@ const formatBotQuestion = (
 
   if (!questionData) return { text: '', suggestions: undefined };
 
-  const questionText = `<strong>${questionData.question}</strong>`;
+  const questionText = `**${questionData.question}**`;
 
   const scenarioSection = activeScenario.themeSuggestions.find(
     (s) => s.id === questionData.id,
