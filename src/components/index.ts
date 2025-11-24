@@ -8,3 +8,4 @@ export * from './generated-history/generated-history-display.component';
 export * from './suggestion/suggestion.item.component';
 export * from './guide-progress-indicator/guide-progress-indicator.component';
 export * from './chat-flow-interface/chat-flow-interface.component';
+export * from './draft-summary-modal/draft-summary-modal.component';

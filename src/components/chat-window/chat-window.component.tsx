@@ -6,7 +6,7 @@ import { GuideProgressIndicator } from '../guide-progress-indicator/guide-progre
 import { ChatFlowInterface } from '../chat-flow-interface/chat-flow-interface.component';
 
 const ChatWindow = () => {
-  const { isFinished, guideQuestions } = useCompleteGuideState();
+  const { isFinished } = useCompleteGuideState();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -35,13 +35,9 @@ const ChatWindow = () => {
         {/* 💡 Exibe a Seção de Resultados APENAS QUANDO FINALIZADO */}
         {isFinished && (
           <>
-            <ScenarioDraftSummaryComponent
-              // 💡 Passando o array de perguntas (guideQuestions)
-              guideQuestions={guideQuestions}
-              isFinished={isFinished}
-            />
+            <ScenarioDraftSummaryComponent />
             <GeneratedStoryDisplay isFinished={isFinished} />
-            {/* 🛑 Se estiver FINALIZADO, o MessageList não está mais aqui. 
+            {/* 🛑 Se estiver FINALIZADO, o MessageList não está mais aqui.
                              Devemos colocar a âncora aqui para rolar para o final do conteúdo de resultado. */}
             <div ref={messagesEndRef} />
           </>
