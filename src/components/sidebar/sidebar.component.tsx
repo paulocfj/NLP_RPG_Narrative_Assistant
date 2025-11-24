@@ -1,13 +1,26 @@
-import { BookOpen, ChevronRight, ScrollText } from 'lucide-react';
+import { BookOpen, ChevronRight, ScrollText, X } from 'lucide-react';
 import { NewScenarioBtn, ScenarioDraftBtn } from './components';
 
-const Sidebar = () => {
+type SidebarProps = {
+  onClose: () => void;
+};
+
+const Sidebar = ({ onClose }: SidebarProps) => {
   return (
     <div className="h-full bg-gray-800 text-white shadow-xl p-6 border-r border-gray-700 flex flex-col">
-      {/* 1. Título do Grimório */}
-      <div className="flex items-center text-xl font-extrabold text-yellow-400 mb-6 border-b border-gray-700 pb-3">
-        <BookOpen className="w-6 h-6 mr-2" />
-        Grimório de Aventura
+      {/* 1. Título do Grimório + Botão de Fechar no Mobile */}
+      <div className="flex items-center justify-between text-xl font-extrabold text-yellow-400 mb-6 border-b border-gray-700 pb-3">
+        <div className="flex items-center">
+          <BookOpen className="w-6 h-6 mr-2" />
+          Grimório de Aventura
+        </div>
+        {/* ✅ NOVO: Botão de Fechar visível apenas em Mobile */}
+        <button
+          onClick={onClose}
+          className="p-1 rounded-full text-white hover:bg-gray-700 md:hidden"
+        >
+          <X className="w-5 h-5" />
+        </button>
       </div>
 
       {/* 2. GRUPO NAV 1: Botões de Ação Principal (Separados por space-y-3) */}
