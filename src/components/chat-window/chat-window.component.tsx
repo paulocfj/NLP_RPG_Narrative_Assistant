@@ -11,6 +11,7 @@ import { formatBotQuestion, getNextMessageId } from '../../utils';
 import { SENDER_BOT, SENDER_USER } from '../../constants';
 import { useThemeState } from '../../contexts/theme';
 import { GeneratedStoryDisplay } from '../generated-history/generated-history-display.component';
+import { GuideProgressIndicator } from '../guide-progress-indicator/guide-progress-indicator.component';
 
 const ChatWindow = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -30,8 +31,6 @@ const ChatWindow = () => {
 
   const currentQuestion = InitialGuide[currentQuestionIndex];
   const totalQuestions = InitialGuide.length;
-
-  const progressText = `Passo ${currentQuestionIndex + 1} de ${totalQuestions}`;
 
   // Efeito para iniciar o chat (Lógica de inicialização mantida)
   useEffect(() => {
@@ -155,12 +154,9 @@ const ChatWindow = () => {
         <h1 className="text-3xl font-bold text-yellow-400">
           Guia de Cenário RPG
         </h1>
-        <p
-          className={`text-sm mt-1 font-mono ${isFinished ? 'text-green-400' : 'text-indigo-400'}`}
-        >
-          {/* ✅ Agora reflete o estado global */}
-          {isFinished ? 'Status: Aventura Completa' : `Status: ${progressText}`}
-        </p>
+        <div className="mt-3 -mx-4 -mb-4">
+          <GuideProgressIndicator />
+        </div>
       </header>
 
       {/* Área de Mensagens e Rascunho */}
