@@ -1,5 +1,5 @@
 import './chatbot.page.css';
-import { ChatWindow, Sidebar } from '../../components';
+import { ChatWindow, DraftSummaryModal, Sidebar } from '../../components';
 
 const ChatbotPage = () => {
   return (
@@ -17,6 +17,10 @@ const ChatbotPage = () => {
         <div className="flex-1 flex flex-col">
           <ChatWindow />
         </div>
+
+        {/* ✅ Modal de Rascunho */}
+        {/* Ele é renderizado aqui. Seu CSS (fixed, z-50) garante que ele flutue por cima. */}
+        <DraftSummaryModal />
       </div>
     </div>
   );

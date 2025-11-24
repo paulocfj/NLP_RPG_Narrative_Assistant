@@ -11,23 +11,26 @@ import { SENDER_BOT, SENDER_USER } from '../../constants';
 import { useThemeState } from '../../contexts/theme';
 
 const ChatFlowInterface = () => {
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [inputPreFill, setInputPreFill] = useState('');
-
   const messages = useChatState();
-  const { isFinished } = useCompleteGuideState();
+  const { isFinished, guideQuestions } = useCompleteGuideState();
 
   const { addMessage, setMessages } = useChatMessage();
   const { initializeGuide, updateResponse, completeGuide } = useGuide();
   const themeScenario = useThemeState();
 
-  const currentQuestion = InitialGuide[currentQuestionIndex];
-  const totalQuestions = InitialGuide.length;
+  const answeredQuestions = guideQuestions.filter(
+    (question) => question.userResponse && question.userResponse.trim() !== '',
+  ).length;
+
+  const currentQuestion = guideQuestions[answeredQuestions];
+  const totalQuestions = guideQuestions.length;
+  const currentQuestionIndex = answeredQuestions;
 
   useEffect(() => {
     if (messages.length > 0) return;
 
-    initializeGuide(InitialGuide);
+    initializeGuide();
 
     const initialMessage: Message = {
       id: getNextMessageId(),
@@ -117,7 +120,7 @@ const ChatFlowInterface = () => {
         isStatus: false,
       };
 
-      setCurrentQuestionIndex(nextQuestionIndex);
+      //setCurrentQuestionIndex(nextQuestionIndex);
       addMessage(botQuestionMessage);
     },
     [

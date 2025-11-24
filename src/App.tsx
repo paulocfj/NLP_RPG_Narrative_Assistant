@@ -1,5 +1,5 @@
 import './App.css';
-import { ChatProvider } from './contexts';
+import { ChatProvider, ModalProvider } from './contexts';
 import { CompleteGuideProvider } from './contexts/complete-guide';
 import { ThemeProvider } from './contexts/theme';
 
@@ -11,7 +11,9 @@ function App() {
       <ThemeProvider>
         <ChatProvider>
           <CompleteGuideProvider>
-            <ChatbotPage />
+            <ModalProvider>
+              <ChatbotPage />
+            </ModalProvider>
           </CompleteGuideProvider>
         </ChatProvider>
       </ThemeProvider>

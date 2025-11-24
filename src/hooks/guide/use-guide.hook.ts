@@ -1,16 +1,16 @@
 import { useCallback } from 'react';
 import { useCompleteGuideDispatch } from '../../contexts';
-import type { CoreQuestionsGuide } from '../../types';
+import { InitialGuide } from '../../data';
 
 /**
  * @typedef {object} UseGuideReturn
- * @property {(guide: CoreQuestionsGuide) => void} initializeGuide Function to set the initial structure of the guide questions.
+ * @property {() => void} initializeGuide Function to set the initial structure of the guide questions.
  * @property {() => void} resetGuide Function to clear all user responses in the guide, reverting them to empty strings.
  * @property {(question: string, userResponse: string) => void} updateResponse Function to update the user's response for a specific question in the guide.
  * @property {() => void} completeGuide Function to set the isFinished flag to true in the guide state.
  */
 type UseGuideReturn = {
-  initializeGuide: (guide: CoreQuestionsGuide) => void;
+  initializeGuide: () => void;
   resetGuide: () => void;
   updateResponse: (question: string, userResponse: string) => void;
   completeGuide: () => void; // Added function for completeness
@@ -30,14 +30,10 @@ const useGuide = (): UseGuideReturn => {
    * Initializes the guide state with the base set of neutral questions.
    * This is typically called once when the guide component mounts.
    * The function is memoized using `useCallback`.
-   * @param {CoreQuestionsGuide} guide The array of base questions to initialize the state.
    */
-  const initializeGuide = useCallback(
-    (guide: CoreQuestionsGuide) => {
-      dispatch({ type: 'INITIALIZE_GUIDE', payload: guide });
-    },
-    [dispatch],
-  );
+  const initializeGuide = useCallback(() => {
+    dispatch({ type: 'INITIALIZE_GUIDE', payload: InitialGuide });
+  }, [dispatch]);
 
   /**
    * Resets the entire guide state, clearing all user responses while keeping the questions intact.
