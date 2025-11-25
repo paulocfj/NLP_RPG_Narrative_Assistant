@@ -1,7 +1,6 @@
-import { useEffect, useRef } from 'react';
+import { lazy, Suspense, useEffect, useRef } from 'react';
 import { ScenarioDraftSummaryComponent } from '../scenario-draft-summary/scenario-draft-summary.component';
 import { useCompleteGuideState } from '../../contexts/complete-guide';
-import { GeneratedStoryDisplay } from '../generated-history/generated-history-display.component';
 import { GuideProgressIndicator } from '../guide-progress-indicator/guide-progress-indicator.component';
 import { ChatFlowInterface } from '../chat-flow-interface/chat-flow-interface.component';
 
@@ -14,6 +13,14 @@ const ChatWindow = () => {
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }
   }, [isFinished]);
+
+  const GeneratedStoryDisplayLazy = lazy(() =>
+    import('../generated-history/generated-history-display.component').then(
+      (module) => ({
+        default: module.GeneratedStoryDisplay,
+      }),
+    ),
+  );
 
   return (
     <div className="flex flex-col h-full bg-gray-800">
@@ -36,10 +43,17 @@ const ChatWindow = () => {
         {isFinished && (
           <>
             <ScenarioDraftSummaryComponent />
-            <GeneratedStoryDisplay isFinished={isFinished} />
-            {/* 🛑 Se estiver FINALIZADO, o MessageList não está mais aqui.
-                             Devemos colocar a âncora aqui para rolar para o final do conteúdo de resultado. */}
-            <div ref={messagesEndRef} />
+            <Suspense
+              fallback={
+                <div className="p-8 text-center bg-gray-900 text-yellow-400 border-t-8 border-yellow-500">
+                  <h2 className="text-xl font-bold animate-pulse">
+                    Carregando motor de resultado...
+                  </h2>
+                </div>
+              }
+            >
+              <GeneratedStoryDisplayLazy isFinished={isFinished} />
+            </Suspense>
           </>
         )}
       </div>
