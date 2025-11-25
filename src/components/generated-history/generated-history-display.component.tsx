@@ -4,6 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { CopyButton } from '../copy-btn/copy-btn.component';
 import { DownloadButton } from '../download-btn/download-btn.component';
+import { cleanStoryContent } from '../../utils';
 
 type GeneratedStoryDisplayProps = {
   isFinished: boolean;
@@ -50,6 +51,7 @@ const GeneratedStoryDisplay: React.FC<GeneratedStoryDisplayProps> = ({
       </div>
     );
   } // Definição dos estilos Tailwind para os elementos Markdown (Adicionei estilos de tabela para compatibilidade GFM)
+  const finalStory = cleanStoryContent(story);
 
   const markdownComponents = {
     h2: ({ ...props }) => (
@@ -114,7 +116,7 @@ const GeneratedStoryDisplay: React.FC<GeneratedStoryDisplayProps> = ({
             components={markdownComponents}
             remarkPlugins={[remarkGfm]}
           >
-            {story}
+            {finalStory}
           </ReactMarkdown>
         </div>
       </main>
