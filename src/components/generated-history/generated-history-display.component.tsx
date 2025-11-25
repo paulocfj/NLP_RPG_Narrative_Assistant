@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useStoryGenerator } from '../../hooks';
 import ReactMarkdown from 'react-markdown'; // 1. Import do Renderizador
 import remarkGfm from 'remark-gfm'; // 2. Import do Plugin GFM (para tabelas, etc.)
+import { CopyButton } from '../copy-btn/copy-btn.component';
 
 type GeneratedStoryDisplayProps = {
   isFinished: boolean;
@@ -91,23 +92,36 @@ const GeneratedStoryDisplay: React.FC<GeneratedStoryDisplayProps> = ({
   // Se a história foi gerada com sucesso
   return (
     <div className="p-8 bg-gray-900 text-white border-t-8 border-yellow-500">
-      <h2 className="text-4xl font-extrabold text-center mb-6 text-yellow-400">
-        ✨ Seu Roteiro RPG (One-Shot) ✨
-      </h2>
-      <p className="text-lg font-mono mb-6 text-indigo-300 text-center">
-        Com base nas suas 9 respostas e nas regras do sistema.
-      </p>
-      <div className="bg-gray-800 p-6 rounded-lg shadow-xl">
-        {/* O whitespace-pre-wrap foi removido daqui e será tratado pelo ReactMarkdown */}
+      {/* 1. HEADER BLOCK */}
+      <header className="mb-6 border-b border-gray-700 pb-4">
+        <h2 className="text-4xl font-extrabold text-center mb-2 text-yellow-400">
+          ✨ Seu Roteiro RPG (One-Shot) ✨
+        </h2>
+        <p className="text-lg font-mono text-indigo-300 text-center">
+          Com base nas suas 9 respostas e nas regras do sistema.
+        </p>
+      </header>
+
+      {/* 2. BODY BLOCK (Conteúdo da História) */}
+      <main className="bg-gray-800 p-6 rounded-lg shadow-xl mb-6">
         <div className="leading-relaxed">
           <ReactMarkdown
-            components={markdownComponents} // Aplica os estilos Tailwind
-            remarkPlugins={[remarkGfm]} // Habilita funcionalidades extras do Markdown
+            components={markdownComponents}
+            remarkPlugins={[remarkGfm]}
           >
             {story}
           </ReactMarkdown>
         </div>
-      </div>
+      </main>
+
+      {/* 3. FOOTER BLOCK (Botão de Copiar) */}
+      <footer className="flex justify-center pt-4 border-t border-gray-700">
+        <CopyButton
+          textToCopy={story}
+          buttonText="Copiar Roteiro Completo"
+          className="w-full sm:max-w-xs justify-center"
+        />
+      </footer>
     </div>
   );
 };
