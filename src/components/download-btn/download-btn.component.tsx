@@ -1,7 +1,5 @@
 import React from 'react';
 import { FileText } from 'lucide-react';
-import { toJpeg } from 'html-to-image';
-import jsPDF from 'jspdf';
 
 /**
  * @interface DownloadButtonProps
@@ -34,14 +32,22 @@ const DownloadButton = ({
     const element = targetRef.current;
     if (!element) return;
 
-    const pdfName = fileName.endsWith('.pdf') ? fileName : `${fileName}.pdf`;
-    const footerElement = element.querySelector('footer');
-
-    if (footerElement instanceof HTMLElement) {
-      footerElement.style.display = 'none';
-    }
-
     try {
+      const [htmlToImageModule, jsPDFModule] = await Promise.all([
+        import('html-to-image'),
+        import('jspdf'),
+      ]);
+
+      const { toJpeg } = htmlToImageModule;
+      const jsPDF = jsPDFModule.default;
+
+      const pdfName = fileName.endsWith('.pdf') ? fileName : `${fileName}.pdf`;
+      const footerElement = element.querySelector('footer');
+
+      if (footerElement instanceof HTMLElement) {
+        footerElement.style.display = 'none';
+      }
+
       const imgData = await toJpeg(element, {
         quality: 1.0,
         pixelRatio: 2,
@@ -69,9 +75,10 @@ const DownloadButton = ({
 
       pdf.save(pdfName);
     } catch (error) {
-      console.error('Falha ao gerar o PDF com html-to-image:', error);
-      alert('Erro ao gerar o PDF. Utilize outro navegador se possível');
+      console.error('Falha ao gerar o PDF com importação dinâmica:', error);
+      alert('Erro ao gerar o PDF. Verifique a conexão e tente novamente.');
     } finally {
+      const footerElement = element?.querySelector('footer');
       if (footerElement instanceof HTMLElement) {
         footerElement.style.display = 'flex';
       }
@@ -89,7 +96,6 @@ const DownloadButton = ({
 
         ${isDisabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}
 
-        // Cores Hexadecimais para evitar problemas de compatibilidade
         ${
           isDisabled
             ? 'bg-gray-500 text-white'
