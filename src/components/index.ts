@@ -10,3 +10,4 @@ export * from './guide-progress-indicator/guide-progress-indicator.component';
 export * from './chat-flow-interface/chat-flow-interface.component';
 export * from './draft-summary-modal/draft-summary-modal.component';
 export * from './copy-btn/copy-btn.component';
+export * from './download-btn/download-btn.component';
