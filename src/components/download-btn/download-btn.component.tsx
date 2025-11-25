@@ -1,7 +1,5 @@
 import React from 'react';
 import { FileText } from 'lucide-react';
-import { toJpeg } from 'html-to-image';
-import jsPDF from 'jspdf';
 
 /**
  * @interface DownloadButtonProps
@@ -34,14 +32,22 @@ const DownloadButton = ({
     const element = targetRef.current;
     if (!element) return;
 
-    const pdfName = fileName.endsWith('.pdf') ? fileName : `${fileName}.pdf`;
-    const footerElement = element.querySelector('footer');
-
-    if (footerElement instanceof HTMLElement) {
-      footerElement.style.display = 'none';
-    }
-
     try {
+      const [htmlToImageModule, jsPDFModule] = await Promise.all([
+        import('html-to-image'),
+        import('jspdf'),
+      ]);
+
+      const { toJpeg } = htmlToImageModule;
+      const jsPDF = jsPDFModule.default;
+
+      const pdfName = fileName.endsWith('.pdf') ? fileName : `${fileName}.pdf`;
+      const footerElement = element.querySelector('footer');
+
+      if (footerElement instanceof HTMLElement) {
+        footerElement.style.display = 'none';
+      }
+
       const imgData = await toJpeg(element, {
         quality: 1.0,
         pixelRatio: 2,
@@ -69,9 +75,10 @@ const DownloadButton = ({
 
       pdf.save(pdfName);
     } catch (error) {
-      console.error('Falha ao gerar o PDF com html-to-image:', error);
-      alert('Erro ao gerar o PDF. Utilize outro navegador se possível');
+      console.error('Falha ao gerar o PDF com importação dinâmica:', error);
+      alert('Erro ao gerar o PDF. Verifique a conexão e tente novamente.');
     } finally {
+      const footerElement = element?.querySelector('footer');
       if (footerElement instanceof HTMLElement) {
         footerElement.style.display = 'flex';
       }
@@ -82,24 +89,24 @@ const DownloadButton = ({
 
   return (
     <button
+      type="button"
       onClick={handleDownloadPDF}
       disabled={isDisabled}
       className={`
-        px-6 py-2 rounded-lg font-bold transition-colors duration-200 flex items-center gap-2 shadow-lg
+        px-6 py-2 rounded-lg font-bold transition-colors duration-200 flex items-center gap-2 shadow-lg font-extrabold text-yellow-400
 
         ${isDisabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}
 
-        // Cores Hexadecimais para evitar problemas de compatibilidade
         ${
           isDisabled
-            ? 'bg-gray-500 text-white'
-            : 'bg-[#4B5563] hover:bg-[#374151] text-white'
+            ? 'text-gray-500 bg-gray-700/30 cursor-not-allowed'
+            : 'bg-yellow-800/80 hover:bg-yellow-900 text-yellow-300 cursor-pointer'
         }
         ${className}
       `}
     >
-      <FileText size={20} />
-      Baixar Roteiro (.pdf)
+      <FileText size={25} />
+      <span className="font-semibold">Baixar Roteiro (.pdf)</span>
     </button>
   );
 };

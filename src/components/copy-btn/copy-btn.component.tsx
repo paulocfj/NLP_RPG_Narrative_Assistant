@@ -86,9 +86,10 @@ const CopyButton = ({
 
   return (
     <button
+      type="button"
       onClick={handleCopy}
       className={`
-        px-6 py-2 rounded-lg font-bold transition-colors duration-200 flex items-center gap-2 shadow-lg
+        px-6 py-2 rounded-lg font-bold transition-colors duration-200 flex items-center gap-2 shadow-lg font-extrabold text-yellow-400
 
         // 2. Cursor Condicional e Opacidade
         ${isDisabled ? 'cursor-not-allowed opacity-80' : 'cursor-pointer'}
@@ -98,15 +99,15 @@ const CopyButton = ({
           copyError
             ? 'bg-red-700 text-white'
             : isCopied
-              ? 'bg-green-700 text-white'
-              : 'bg-indigo-600 hover:bg-indigo-700 text-white'
+              ? 'text-gray-500 bg-gray-700/30 cursor-not-allowed'
+              : 'bg-yellow-800/80 hover:bg-yellow-900 text-yellow-300 cursor-pointer'
         }
         ${className}
       `}
       disabled={isDisabled}
     >
       <Icon size={20} />
-      {displayButtonText}
+      <span className="font-semibold">{displayButtonText}</span>
     </button>
   );
 };
