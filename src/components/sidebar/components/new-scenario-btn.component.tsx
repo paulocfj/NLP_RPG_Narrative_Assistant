@@ -14,11 +14,11 @@ const NewScenarioBtn = () => {
   return (
     <button
       type="button"
-      className="flex items-center w-full text-left p-3 rounded-lg bg-indigo-700/50 hover:bg-indigo-700 transition duration-200 cursor-pointer text-white"
+      className="flex items-center w-full text-left p-3 rounded-lg bg-yellow-800/30 hover:bg-yellow-800/50 text-yellow-300 cursor-pointer"
       onClick={handleNewCampaign}
       title="Iniciar uma nova aventura e zerar o guia atual."
     >
-      <Zap className="w-5 h-5 mr-3 text-indigo-300" />
+      <Zap className="w-5 h-5 mr-3" />
       <span className="font-semibold">Nova Campanha</span>
     </button>
   );

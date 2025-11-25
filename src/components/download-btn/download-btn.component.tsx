@@ -89,23 +89,24 @@ const DownloadButton = ({
 
   return (
     <button
+      type="button"
       onClick={handleDownloadPDF}
       disabled={isDisabled}
       className={`
-        px-6 py-2 rounded-lg font-bold transition-colors duration-200 flex items-center gap-2 shadow-lg
+        px-6 py-2 rounded-lg font-bold transition-colors duration-200 flex items-center gap-2 shadow-lg font-extrabold text-yellow-400
 
         ${isDisabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}
 
         ${
           isDisabled
-            ? 'bg-gray-500 text-white'
-            : 'bg-[#4B5563] hover:bg-[#374151] text-white'
+            ? 'text-gray-500 bg-gray-700/30 cursor-not-allowed'
+            : 'bg-yellow-800/80 hover:bg-yellow-900 text-yellow-300 cursor-pointer'
         }
         ${className}
       `}
     >
-      <FileText size={20} />
-      Baixar Roteiro (.pdf)
+      <FileText size={25} />
+      <span className="font-semibold">Baixar Roteiro (.pdf)</span>
     </button>
   );
 };
