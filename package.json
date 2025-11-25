@@ -10,9 +10,11 @@
     "lint": "eslint . --ext .ts,.tsx",
     "preview": "vite preview"
   },
+  "overrides": {
+    "node-fetch": "2.6.7"
+  },
   "dependencies": {
     "@google/genai": "^1.30.0",
-    "@vercel/node": "^2.3.0",
     "dotenv": "^17.2.3",
     "html-to-image": "^1.11.13",
     "jspdf": "^3.0.4",
@@ -30,6 +32,7 @@
     "@types/react-dom": "^19.1.9",
     "@typescript-eslint/eslint-plugin": "^8.46.2",
     "@typescript-eslint/parser": "^8.46.2",
+    "@vercel/node": "^2.3.0",
     "@vitejs/plugin-react-swc": "^4.1.0",
     "autoprefixer": "^10.4.21",
     "eslint": "^9.39.0",
