@@ -3,3 +3,4 @@ export * from './id-generator';
 export * from './theme-scenario';
 export * from './prompt-builder';
 export * from './markdown';
+export * from './sanitize-input-text';
