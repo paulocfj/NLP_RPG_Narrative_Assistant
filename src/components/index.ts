@@ -12,3 +12,4 @@ export * from './draft-summary-modal/draft-summary-modal.component';
 export * from './copy-btn/copy-btn.component';
 export * from './download-btn/download-btn.component';
 export * from './welcome-modal/welcome-modal.component';
+export * from './about-modal/about-modal.component';

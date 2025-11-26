@@ -1,5 +1,5 @@
 import { Swords, X } from 'lucide-react';
-import { NewScenarioBtn, ScenarioDraftBtn } from './components';
+import { AboutModalBtn, NewScenarioBtn, ScenarioDraftBtn } from './components';
 
 type SidebarProps = {
   onClose: () => void;
@@ -31,6 +31,10 @@ const Sidebar = ({ onClose }: SidebarProps) => {
           <ScenarioDraftBtn />
         </nav>
       </main>
+
+      <div className="pt-4 mt-4 border-t border-gray-700">
+        <AboutModalBtn />
+      </div>
 
       <footer className="pt-6 border-t border-gray-700 text-sm text-gray-500">
         <p>Assistente de One-Shots 1.0</p>
