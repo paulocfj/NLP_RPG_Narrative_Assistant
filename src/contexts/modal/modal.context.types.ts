@@ -4,16 +4,15 @@ type ModalProviderProps = {
   children: ReactNode;
 };
 
-// Define todos os modais possíveis
-type ActiveModal = 'DRAFT_SUMMARY' | 'WELCOME' | null;
+type ActiveModal = 'ABOUT' | 'DRAFT_SUMMARY' | 'WELCOME' | null;
 
 type ModalState = {
-  activeModal: ActiveModal; // Armazena a string do modal aberto
+  activeModal: ActiveModal;
 };
 
 /**
  * @typedef {object} ModalDispatch
- * @description As funções de ação (SET) para o contexto do Modal.
+ * @description The action functions (SET) for the Modal context.
  */
 type ModalDispatch = {
   openModal: (modalType: ActiveModal) => void;

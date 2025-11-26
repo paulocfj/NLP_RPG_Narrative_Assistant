@@ -1,7 +1,13 @@
 import { useState } from 'react';
 import { Menu, X, BookOpenText } from 'lucide-react';
 import './chatbot.page.css';
-import { ChatWindow, DraftSummaryModal, Sidebar } from '../../components';
+import {
+  AboutModal,
+  ChatWindow,
+  DraftSummaryModal,
+  Sidebar,
+  WelcomeModal,
+} from '../../components';
 
 const ChatbotPage = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -62,7 +68,11 @@ const ChatbotPage = () => {
           </div>
         </div>
 
+        <AboutModal />
+
         <DraftSummaryModal />
+
+        <WelcomeModal />
       </div>
     </div>
   );
