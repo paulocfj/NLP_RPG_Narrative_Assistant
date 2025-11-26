@@ -89,18 +89,16 @@ const CopyButton = ({
       type="button"
       onClick={handleCopy}
       className={`
-        px-6 py-2 rounded-lg font-bold transition-colors duration-200 flex items-center gap-2 shadow-lg font-extrabold text-yellow-400
+        px-6 py-2 rounded-lg font-bold transition-colors duration-200 flex items-center gap-2 shadow-lg font-extrabold
 
-        // 2. Cursor Condicional e Opacidade
         ${isDisabled ? 'cursor-not-allowed opacity-80' : 'cursor-pointer'}
 
-        // 3. Estilo de Cor Condicional (Sem hover em Copiado/Erro)
         ${
           copyError
             ? 'bg-red-700 text-white'
             : isCopied
               ? 'text-gray-500 bg-gray-700/30 cursor-not-allowed'
-              : 'bg-yellow-800/80 hover:bg-yellow-900 text-yellow-300 cursor-pointer'
+              : 'bg-yellow-800/80 hover:bg-yellow-900 text-yellow-400 cursor-pointer'
         }
         ${className}
       `}

@@ -32,6 +32,31 @@ const DownloadButton = ({
     const element = targetRef.current;
     if (!element) return;
 
+    const originalStyles: {
+      element: HTMLElement;
+      originalMarginBottom: string;
+    }[] = [];
+
+    const ELEMENTS_TO_SPACE = ['h2', 'h3', 'p', 'ul', 'ol', 'hr'];
+    const MARGIN_BOTTOM_FORCED = '40px';
+
+    ELEMENTS_TO_SPACE.forEach((selector) => {
+      element.querySelectorAll(selector).forEach((el) => {
+        if (el instanceof HTMLElement) {
+          originalStyles.push({
+            element: el,
+            originalMarginBottom: el.style.marginBottom,
+          });
+          el.style.marginBottom = MARGIN_BOTTOM_FORCED;
+        }
+      });
+    });
+
+    const footerElement = element.querySelector('footer');
+    if (footerElement instanceof HTMLElement) {
+      footerElement.style.display = 'none';
+    }
+
     try {
       const [htmlToImageModule, jsPDFModule] = await Promise.all([
         import('html-to-image'),
@@ -42,16 +67,11 @@ const DownloadButton = ({
       const jsPDF = jsPDFModule.default;
 
       const pdfName = fileName.endsWith('.pdf') ? fileName : `${fileName}.pdf`;
-      const footerElement = element.querySelector('footer');
-
-      if (footerElement instanceof HTMLElement) {
-        footerElement.style.display = 'none';
-      }
 
       const imgData = await toJpeg(element, {
         quality: 1.0,
         pixelRatio: 2,
-        backgroundColor: '#111827',
+        backgroundColor: '#FFFDF4',
       });
 
       const pdf = new jsPDF('p', 'mm', 'a4');
@@ -78,6 +98,10 @@ const DownloadButton = ({
       console.error('Falha ao gerar o PDF com importação dinâmica:', error);
       alert('Erro ao gerar o PDF. Verifique a conexão e tente novamente.');
     } finally {
+      originalStyles.forEach(({ element: el, originalMarginBottom }) => {
+        el.style.marginBottom = originalMarginBottom;
+      });
+
       const footerElement = element?.querySelector('footer');
       if (footerElement instanceof HTMLElement) {
         footerElement.style.display = 'flex';
@@ -93,14 +117,14 @@ const DownloadButton = ({
       onClick={handleDownloadPDF}
       disabled={isDisabled}
       className={`
-        px-6 py-2 rounded-lg font-bold transition-colors duration-200 flex items-center gap-2 shadow-lg font-extrabold text-yellow-400
+        px-6 py-2 rounded-lg font-bold transition-colors duration-200 flex items-center gap-2 shadow-lg font-extrabold
 
         ${isDisabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}
 
         ${
           isDisabled
             ? 'text-gray-500 bg-gray-700/30 cursor-not-allowed'
-            : 'bg-yellow-800/80 hover:bg-yellow-900 text-yellow-300 cursor-pointer'
+            : 'bg-yellow-800/80 hover:bg-yellow-900 text-yellow-400 cursor-pointer'
         }
         ${className}
       `}

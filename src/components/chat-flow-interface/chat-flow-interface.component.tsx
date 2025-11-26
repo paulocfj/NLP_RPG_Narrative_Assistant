@@ -34,7 +34,7 @@ const ChatFlowInterface = () => {
 
     const initialMessage: Message = {
       id: getNextMessageId(),
-      text: `Saudações, Mestre 🧙!\nSeja bem-vindo ao seu Guia de Cenário RPG. Vamos criar uma aventura épica OneShot em ${totalQuestions} passos!`,
+      text: `Saudações, Mestre 🧙!\nSeja bem-vindo ao seu Guia de Cenário RPG. Vamos criar uma aventura épica OneShot em 9 passos!`,
       sender: SENDER_BOT,
       timestamp: new Date().toLocaleString('pt-BR'),
       isStatus: true,
