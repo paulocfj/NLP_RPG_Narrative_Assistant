@@ -4,13 +4,25 @@ import type {
   OneShotGuideQuestion,
 } from '../../types';
 import type { GuideActions } from './complete-guide.context.types';
-
+/**
+ * Defines the initial state for the Complete Guide context.
+ * The guide starts with an empty list of questions and is not finished.
+ */
 const initialState: CompleteGuide = {
-  guideQuestions: [], // Array vazio no início
-  isFinished: false, // Não finalizado
+  guideQuestions: [],
+  isFinished: false,
 };
 
-/** O Reducer que gerencia a lógica de atualização do estado */
+/**
+ * A Redux-style reducer function for managing the state of the One-Shot adventure guide.
+ *
+ * It handles actions related to initializing the guide, updating user responses,
+ * and managing the completion status.
+ *
+ * @param state The current state of the CompleteGuide (questions and completion status).
+ * @param action The dispatched action to modify the state (e.g., 'UPDATE_RESPONSE', 'INITIALIZE_GUIDE').
+ * @returns The new state object after applying the action.
+ */
 const completeGuideReducer = (
   state: CompleteGuide,
   action: GuideActions,
@@ -19,28 +31,28 @@ const completeGuideReducer = (
     case 'GUIDE_COMPLETED':
       return {
         ...state,
-        isFinished: true, // 🛑 Atualiza a flag de conclusão
+        isFinished: true,
       };
 
     case 'INITIALIZE_GUIDE': {
-      // Devemos mapear para GuideQuestion[] (adicionando userResponse). // action.payload é CoreQuestionsGuide (OneShotGuideQuestion[]). // 🛑 CORREÇÃO AQUI
+      // Maps the initial static questions (payload) to the state format,
+      // adding an empty userResponse field to each.
       const initialQuestions: GuideQuestion[] = (
         action.payload as OneShotGuideQuestion[]
       ).map((q) => ({
         ...q,
-        // Adiciona a propriedade userResponse, satisfazendo o tipo GuideQuestion
         userResponse: '',
       }));
 
       return {
         ...state,
-        guideQuestions: initialQuestions, // Atualiza o array dentro do objeto
-        isFinished: false, // Garante que o estado não esteja finalizado ao inicializar
+        guideQuestions: initialQuestions,
+        isFinished: false,
       };
     }
 
     case 'UPDATE_RESPONSE': {
-      // Atualiza a resposta para uma pergunta específica dentro do array
+      // Finds the question by its text and updates the user's response for that specific item.
       const updatedQuestions = state.guideQuestions.map((item) =>
         item.question === action.payload.question
           ? { ...item, userResponse: action.payload.userResponse }
@@ -49,12 +61,12 @@ const completeGuideReducer = (
 
       return {
         ...state,
-        guideQuestions: updatedQuestions, // 🛑 Retorna o array atualizado
+        guideQuestions: updatedQuestions,
       };
     }
 
     case 'RESET_GUIDE': {
-      // Reseta o array de perguntas, mantendo a estrutura do objeto
+      // Clears all user responses from the current guide questions and sets isFinished to false.
       const resetQuestions = state.guideQuestions.map((item) => ({
         ...item,
         userResponse: '',
@@ -62,13 +74,12 @@ const completeGuideReducer = (
       return {
         ...state,
         guideQuestions: resetQuestions,
-        isFinished: false, // 🛑 Reseta a flag de conclusão
+        isFinished: false,
       };
     }
 
     default:
-      // Garante que todas as ações sejam tratadas (TypeSafety)
-      return state; // Retorna o estado inalterado
+      return state;
   }
 };
 

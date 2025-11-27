@@ -9,7 +9,6 @@ const GuideProgressIndicator = () => {
   const currentStep = answeredQuestions;
   const progressPercentage = (answeredQuestions / totalQuestions) * 100;
 
-  // Define as classes para o estado de progresso vs. finalizado
   const progressTextClass = isFinished ? 'text-green-400' : 'text-yellow-400';
   const progressBarClass = isFinished ? 'bg-green-500' : 'bg-yellow-500';
 

@@ -3,39 +3,54 @@ import { useCompleteGuideState } from '../../contexts';
 import { buildFinalPrompt } from '../../utils';
 import { SYSTEM_PROMPT } from '../../constants';
 
+/**
+ * `useStoryGenerator` is a custom React hook responsible for managing the state
+ * and logic related to generating the One-Shot adventure script using an AI model.
+ *
+ * It combines the system rules (`SYSTEM_PROMPT`) with the user's completed
+ * adventure guide answers (`completeGuide`) to form the final API prompt.
+ *
+ * The hook handles the asynchronous call to the `/api/ai-generator/genai-generate`
+ * endpoint and manages the loading, error, and resulting story states.
+ *
+ * @returns An object containing:
+ * - story: The generated adventure script string, or null.
+ * - loading: A boolean indicating if the generation process is currently running.
+ * - error: A string containing any error message, or null.
+ * - generateStory: An asynchronous function to initiate the story generation process.
+ *
+ * @example
+ * // In a React component:
+ * // const { story, loading, error, generateStory } = useStoryGenerator();
+ * // <button onClick={generateStory} disabled={loading}>Generate Adventure</button>
+ */
 const useStoryGenerator = () => {
-  // Estados para gerenciar a requisição
   const [story, setStory] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Busca os dados da história e regras do Context
   const completeGuide = useCompleteGuideState();
 
-  // Função que será chamada no componente (ex: no clique do botão)
   const generateStory = useCallback(async () => {
-    if (loading) return; // Evita cliques duplicados
+    if (loading) return;
 
     setLoading(true);
     setError(null);
     setStory(null);
 
     try {
-      // 1. Montagem do Prompt Final
       const userQuestionnairePrompt = buildFinalPrompt(completeGuide);
 
-      // Combinamos o Role Geral (SYSTEM_PROMPT) + Regras Específicas + Dados do Usuário
       const fullPrompt = `
         REGRAS DO SISTEMA ESPECÍFICAS (do Mestre):
         ${SYSTEM_PROMPT}
-        
+
         --------------------------------------
-        
+
         DADOS DE ENTRADA DO QUESTIONÁRIO:
         ${userQuestionnairePrompt}
       `;
 
-      // 2. Chamada ao Nosso Backend (Vercel Function)
       const response = await fetch('/api/ai-generator/genai-generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -43,7 +58,6 @@ const useStoryGenerator = () => {
       });
 
       if (!response.ok) {
-        // Tenta ler a mensagem de erro do backend se existir
         const errJson = await response.json();
         throw new Error(
           errJson.error || 'Falha ao conectar com o servidor da Vercel.',
@@ -62,7 +76,7 @@ const useStoryGenerator = () => {
     } finally {
       setLoading(false);
     }
-  }, [loading, completeGuide]); // Dependências do hook
+  }, [loading, completeGuide]);
 
   return { story, loading, error, generateStory };
 };

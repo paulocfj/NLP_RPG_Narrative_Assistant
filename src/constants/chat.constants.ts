@@ -1,4 +1,12 @@
+/**
+ * Defines the identity used for messages sent by the AI or system.
+ * @type {string}
+ */
 const SENDER_BOT = 'bot';
+/**
+ * Defines the identity used for messages sent by the user.
+ * @type {string}
+ */
 const SENDER_USER = 'user';
 /**
  * Maximum character limit for the user input.

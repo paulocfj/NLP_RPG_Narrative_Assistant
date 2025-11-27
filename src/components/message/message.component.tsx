@@ -1,6 +1,6 @@
 import { ScrollText } from 'lucide-react';
 import type { Message } from '../../types';
-import ReactMarkdown from 'react-markdown'; // Importação do componente de Markdown
+import ReactMarkdown from 'react-markdown';
 import { SENDER_USER } from '../../constants';
 import { SuggestionItem } from '../suggestion/suggestion.item.component';
 
@@ -14,9 +14,8 @@ const MessageComponent = ({ message, onSuggestionClick }: MessageProps) => {
   if (message.isStatus && !isUser) {
     return (
       <div className="flex max-w-[90%] my-2 justify-center">
-        {/* A cor da bolha (bg-amber-900/40) foi mantida para o tema Ouro */}
         <div className="p-3 rounded-xl shadow-md bg-amber-900/40 text-amber-100 flex items-center">
-          <ScrollText className="w-5 h-5 mr-2" /> {/* 👈 Ícone Trocado */}
+          <ScrollText className="w-5 h-5 mr-2" />
           <p className="whitespace-pre-wrap font-medium">{message.text}</p>
         </div>
       </div>

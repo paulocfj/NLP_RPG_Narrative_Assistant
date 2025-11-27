@@ -1,3 +1,24 @@
+/**
+ * `SYSTEM_PROMPT` is a constant string that holds the detailed, internal instructions
+ * for the AI model (LLM). It defines the AI's role, objective, design guidelines,
+ * and the exact output format required for generating the One-Shot TTRPG script.
+ *
+ * This prompt acts as the "system rules" sent to the AI before the user's
+ * questionnaire data, ensuring the output is structured, coherent, and adheres
+ * to the principles of narrative modulation and simplification (One-Shot design).
+ *
+ * The prompt dictates the final structure must be in Markdown format, including:
+ * - TÍTULO DA AVENTURA (Adventure Title)
+ * - SINOPSE (Synopsis)
+ * - CENA 1: O GANCHO (The Hook Scene)
+ * - CENA 2: O DESENVOLVIMENTO (The Development Scene)
+ * - CENA 3: O CLÍMAX (The Climax Scene)
+ * - CONCLUSÃO (Conclusion: Success/Failure)
+ * - MECÂNICA ESPECIAL (Special Mechanic/House Rule)
+ * - PERSONAGENS/NPCs (Characters/NPCs)
+ *
+ * @type {string}
+ */
 const SYSTEM_PROMPT = `
 VOCÊ É: Um Assistente de Criação de One-Shots para RPG de Mesa (TTRPG), especializado em ajudar mestres iniciantes a estruturar aventuras coerentes, ágeis e impactantes.
 

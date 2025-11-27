@@ -3,10 +3,11 @@ import { ThemeDispatchContext, ThemeStateContext } from './theme.context';
 import type { ThemeActions, ThemeState } from './theme.context.types';
 
 /**
- * Hook (GET) para obter o estado (tema ativo e cenário sorteado).
- * Componentes que usam este hook serão re-renderizados sempre que o tema ou cenário mudar.
+ * Hook (GET) to retrieve the theme state (active theme and randomized scenario).
+ * Components using this hook will re-render whenever the theme or scenario changes.
  *
- * @returns {ThemeState} O estado atual do tema.
+ * @returns {ThemeState} The current theme state.
+ * @throws {Error} Throws an error if the hook is not used within a ThemeProvider.
  */
 const useThemeState = (): ThemeState => {
   const context = useContext(ThemeStateContext);
@@ -17,10 +18,12 @@ const useThemeState = (): ThemeState => {
 };
 
 /**
- * Hook (SET) para obter as ações (funções setters).
- * Componentes que usam este hook NÃO serão re-renderizados quando o estado do tema mudar.
+ * Hook (SET) to retrieve the dispatch function (setters).
+ * Components using this hook WILL NOT re-render when the theme state changes,
+ * as they only consume the dispatch function.
  *
- * @returns {Dispatch<ThemeActions>} A função dispatch para enviar ações ao reducer.
+ * @returns {Dispatch<ThemeActions>} The dispatch function used to send actions to the reducer.
+ * @throws {Error} Throws an error if the hook is not used within a ThemeProvider.
  */
 const useThemeDispatch = (): Dispatch<ThemeActions> => {
   const context = useContext(ThemeDispatchContext);

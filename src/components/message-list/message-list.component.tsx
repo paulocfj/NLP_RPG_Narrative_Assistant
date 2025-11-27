@@ -1,4 +1,4 @@
-import React, { type ForwardedRef } from 'react'; // Importe 'ForwardedRef'
+import React, { type ForwardedRef } from 'react';
 import { MessageComponent } from '../message/message.component';
 import { useChatState } from '../../contexts';
 
