@@ -3,29 +3,42 @@ import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { sanitizeAndLimitInput } from '../../utils';
 import { MAX_LENGTH } from '../../constants';
 
+/**
+ * Defines the properties for the SendMessageForm component.
+ */
 type SendMessageFormProps = {
   /**
-   * Função chamada ao submeter o formulário com o texto da mensagem.
+   * Function called upon form submission with the trimmed message text.
    */
   onSendMessage: (messageText: string) => void;
 
   /**
-   * Determina se o campo de input e o botão de envio devem estar desabilitados.
+   * Determines if the input field and send button should be disabled (e.g., when
+   * a guide is complete or waiting for an AI response).
    */
   isDisabled: boolean;
 
   /**
-   * Texto opcional para pré-preencher o campo de input (geralmente vindo de sugestões).
+   * Optional text used to pre-fill the input field (typically from suggestion buttons).
    */
   preFillText: string | null;
 
   /**
-   * Função chamada após o envio bem-sucedido de uma mensagem, tipicamente para
-   * limpar o estado `preFillText` no componente pai.
+   * Function called after successful message submission, typically to
+   * clear the `preFillText` state in the parent component.
    */
   onInputFilled: () => void;
 };
 
+/**
+ * A custom React hook that dynamically adjusts the height of a textarea
+ * element based on its content, up to a defined maximum height (200px in this implementation).
+ *
+ * It is triggered whenever the `value` of the textarea changes.
+ *
+ * @param {React.RefObject<HTMLTextAreaElement | null>} textareaRef A ref object attached to the textarea DOM element.
+ * @param {string} value The current string value of the textarea input.
+ */
 const useAutosizeTextarea = (
   textareaRef: React.RefObject<HTMLTextAreaElement | null>,
   value: string,

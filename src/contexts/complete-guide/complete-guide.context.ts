@@ -6,7 +6,6 @@ const CompleteGuideStateContext = createContext<CompleteGuide | undefined>(
   undefined,
 );
 
-/** Contexto para o DISPATCH (Set) */
 const CompleteGuideDispatchContext = createContext<
   Dispatch<GuideActions> | undefined
 >(undefined);

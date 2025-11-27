@@ -1,5 +1,25 @@
 import type { CoreQuestionsGuide } from '../../types';
 
+/**
+ * `InitialGuide` is a constant (Array) that defines the complete set of 9
+ * fundamental questions used to plan and structure a One-Shot RPG adventure
+ * (single-session).
+ *
+ * Each object within the array (`CoreQuestionsGuide`) represents a step in the
+ * structure, categorized by a 'Pillar' (Design Pillar) and a 'mainFocus'
+ * (Main Focus).
+ *
+ * Properties of each object:
+ * - id: Sequential identifier for the step (1 through 9).
+ * - pillar: The main adventure phase or design category ('INTRO', 'PICK ONE GOAL', 'PACE', 'STRUCTURE', 'STREAMLINE').
+ * - mainFocus: The game concept the step addresses (e.g., 'Ação Imediata', 'Clareza de Objetivo').
+ * - question: The detailed question that the Game Master (User) must answer to build the script.
+ *
+ * This constant serves as the initial template (questionnaire) to be filled out
+ * by the user.
+ *
+ * @type {CoreQuestionsGuide}
+ */
 const InitialGuide: CoreQuestionsGuide = [
   {
     id: 1,

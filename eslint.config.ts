@@ -19,9 +19,6 @@ export default defineConfig([
       prettier,
     ],
 
-    // =================================================================
-    // ADIÇÃO: CONFIGURAÇÕES PARA PLUGINS
-    // =================================================================
     settings: {
       react: {
         version: 'detect',

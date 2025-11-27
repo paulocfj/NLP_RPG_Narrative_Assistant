@@ -9,9 +9,6 @@ import {
   CompleteGuideStateContext,
 } from './complete-guide.context';
 
-/**
- * Provedor que encapsula a lógica do 'CompleteGuide'
- */
 const CompleteGuideProvider = ({ children }: CompleteGuideProviderProps) => {
   const [state, dispatch] = useReducer(completeGuideReducer, initialState);
 

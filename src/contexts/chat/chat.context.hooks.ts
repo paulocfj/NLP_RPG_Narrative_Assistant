@@ -4,10 +4,11 @@ import type { Message } from '../../types';
 import type { ChatActions } from './chat.context.types';
 
 /**
- * Hook (GET) para obter o estado (lista de mensagens).
- * Componentes que usam este hook serão re-renderizados sempre que uma mensagem for adicionada.
+ * Hook (GET) to retrieve the state (list of messages).
+ * Components using this hook will re-render whenever a message is added or the list changes.
  *
- * @returns {Message[]} A lista atual de mensagens.
+ * @returns {Message[]} The current list of chat messages.
+ * @throws {Error} Throws an error if the hook is not used within a ChatProvider.
  */
 const useChatState = (): Message[] => {
   const context = useContext(ChatStateContext);
@@ -18,10 +19,13 @@ const useChatState = (): Message[] => {
 };
 
 /**
- * Hook (SET) para obter as ações (funções setters).
- * Componentes que usam este hook NÃO serão re-renderizados quando a lista de mensagens mudar.
+ * Hook (SET) to retrieve the dispatch function (action setters).
+ * Components using this hook WILL NOT re-render when the message list changes,
+ * as they only consume the dispatch function.
  *
- * @returns {Dispatch<ChatActions>} O objeto com as funções de ação (addMessage, clearMessages, setMessages).
+ * @returns {Dispatch<ChatActions>} The dispatch function used to send actions
+ * (ADD_MESSAGE, CLEAR_MESSAGES, SET_MESSAGES) to the chat reducer.
+ * @throws {Error} Throws an error if the hook is not used within a ChatProvider.
  */
 const useChatDispatch = (): Dispatch<ChatActions> => {
   const context = useContext(ChatDispatchContext);

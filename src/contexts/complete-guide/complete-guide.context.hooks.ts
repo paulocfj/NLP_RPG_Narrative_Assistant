@@ -4,9 +4,12 @@ import {
   CompleteGuideStateContext,
 } from './complete-guide.context';
 
-/*
- * Hook (GET): Acessa o estado 'CompleteGuide'.
- * Componentes que usam este hook irão re-renderizar quando o 'guide' mudar.
+/**
+ * Hook (GET): Accesses the 'CompleteGuide' state.
+ * Components using this hook will re-render when the 'guide' state changes.
+ *
+ * @returns {CompleteGuide} The current state object of the adventure guide.
+ * @throws {Error} Throws an error if the hook is not used within a CompleteGuideProvider.
  */
 const useCompleteGuideState = () => {
   const context = useContext(CompleteGuideStateContext);
@@ -19,8 +22,12 @@ const useCompleteGuideState = () => {
 };
 
 /**
- * Hook (SET): Acessa a função 'dispatch' para atualizar o guia.
- * Componentes que usam este hook NÃO irão re-renderizar quando o 'guide' mudar.
+ * Hook (SET): Accesses the 'dispatch' function to update the guide state.
+ * Components using this hook WILL NOT re-render when the 'guide' state changes,
+ * as they only consume the dispatch function.
+ *
+ * @returns {Dispatch<GuideActions>} The dispatch function used to send actions to the guide reducer.
+ * @throws {Error} Throws an error if the hook is not used within a CompleteGuideProvider.
  */
 const useCompleteGuideDispatch = () => {
   const context = useContext(CompleteGuideDispatchContext);
