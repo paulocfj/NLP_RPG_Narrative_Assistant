@@ -76,7 +76,7 @@ const useStoryGenerator = () => {
     } finally {
       setLoading(false);
     }
-  }, [loading, completeGuide]);
+  }, [completeGuide]);
 
   return { story, loading, error, generateStory };
 };
