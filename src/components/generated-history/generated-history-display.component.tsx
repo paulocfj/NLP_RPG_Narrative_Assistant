@@ -14,15 +14,17 @@ const GeneratedStoryDisplay: React.FC<GeneratedStoryDisplayProps> = ({
   isFinished,
 }) => {
   const { story, loading, error, generateStory } = useStoryGenerator();
+  const hasCalled = useRef(false);
 
   const storyContentRef = useRef<HTMLDivElement>(null);
   const [isRefAttached, setIsRefAttached] = useState(false);
 
   useEffect(() => {
-    if (isFinished && !story && !loading) {
+    if (isFinished && !story && !loading && !error && !hasCalled.current) {
+      hasCalled.current = true;
       generateStory();
     }
-  }, [isFinished, story, loading, generateStory]);
+  }, [isFinished, story, loading, generateStory, error]);
 
   useEffect(() => {
     if (story && storyContentRef.current && !isRefAttached) {
