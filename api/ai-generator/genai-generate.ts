@@ -20,7 +20,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const model = genai.models;
 
     const result = await model.generateContent({
-      model: 'gemini-flash-latest',
+      model: 'gemini-3.1-flash-lite',
       contents: [{ role: 'user', parts: [{ text: prompt }] }],
     });
 
